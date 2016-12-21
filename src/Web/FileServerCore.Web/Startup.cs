@@ -1,37 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using FileServerCore.Data;
+using FileServerCore.Data.Common;
+using Microsoft.EntityFrameworkCore;
+using FileServerCore.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Serialization;
+using FileServerCore.Services.Users;
 
 namespace FileServerCore.Web
 {
     public class Startup
     {
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        public IConfigurationRoot Configuration { get; }
+
+        public Startup(IHostingEnvironment env)
         {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            if (env.IsDevelopment())
+            {
+                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+                builder.AddUserSecrets("aspnet-WebApplication1-d6b4432f-02eb-4d60-be7f-05ad30607873");
+            }
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddDbContext<FileServerCoreDbContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));
+            services.AddScoped<DbContext, FileServerCoreDbContext>();
+            services.Add(ServiceDescriptor.Scoped(typeof(IRepository<,>), typeof(Repository<,>)));
+            services.Add(ServiceDescriptor.Scoped(typeof(IRepository<>), typeof(Repository<>)));
+
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddIdentity<User, IdentityRole>(
+                o =>
+                {
+                    o.Password.RequireDigit = false;
+                    o.Password.RequireLowercase = false;
+                    o.Password.RequireUppercase = false;
+                    o.Password.RequireNonAlphanumeric = false;
+                    o.Password.RequiredLength = 6;
+                }).AddEntityFrameworkStores<FileServerCoreDbContext>().AddDefaultTokenProviders();
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+            services.AddMemoryCache();            
+
+            services.AddMvc(/*options => options.Filters.Add(typeof(RequireHttpsAttribute))*/)
+                .AddViewLocalization(x => x.ResourcesPath = "Resources")
+                .AddDataAnnotationsLocalization()
+                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+        }
+
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole();
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            //loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                //app.UseDatabaseErrorPage();
+                //app.UseBrowserLink();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
             }
 
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
-        }
+            app.UseStaticFiles();
+
+            app.UseIdentity();
+            app.UseSession();
+
+            app.UseMvc(
+                routes =>
+                {                 
+                    routes.MapRoute(
+                        name: "areaRoute",
+                        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                    routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
+                });
+        }   
     }
 }
