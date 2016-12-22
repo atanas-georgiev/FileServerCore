@@ -6,29 +6,29 @@
 
     public class AccountRegisterViewModel
     {
-        [Display(Name = "ConfirmPassword", ResourceType = typeof(Resources_Labels))]
+        [Display(Name = "ConfirmPassword", ResourceType = typeof(Labels))]
         [DataType(DataType.Password)]        
-        [Compare("Password", ErrorMessageResourceName = "ErrorPasswordNotMatch", ErrorMessageResourceType = typeof(Resources_ErrorMessages))]
+        [Compare("Password", ErrorMessageResourceName = "ErrorPasswordNotMatch", ErrorMessageResourceType = typeof(ErrorMessages))]
         public string ConfirmPassword { get; set; }
 
-        [Display(Name = "Email", ResourceType = typeof(Resources_Labels))]
-        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Resources_ErrorMessages))]
-        [EmailAddress(ErrorMessageResourceName = "InvalidEmail", ErrorMessageResourceType = typeof(Resources_ErrorMessages))]        
+        [Display(Name = "Email", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [EmailAddress(ErrorMessageResourceName = "InvalidEmail", ErrorMessageResourceType = typeof(ErrorMessages))]        
         public string Email { get; set; }
 
-        [Display(Name = "FirstName", ResourceType = typeof(Resources_Labels))]
-        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Resources_ErrorMessages))]
-        [StringLength(50, ErrorMessageResourceName = "ErrorLength", ErrorMessageResourceType = typeof(Resources_ErrorMessages), MinimumLength = 2)]        
+        [Display(Name = "FirstName", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [StringLength(50, ErrorMessageResourceName = "ErrorLength", ErrorMessageResourceType = typeof(ErrorMessages), MinimumLength = 2)]        
         public string FirstName { get; set; }
 
-        [Display(Name = "LastName", ResourceType = typeof(Resources_Labels))]
-        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Resources_ErrorMessages))]
-        [StringLength(50, ErrorMessageResourceName = "ErrorLength", ErrorMessageResourceType = typeof(Resources_ErrorMessages), MinimumLength = 2)]        
+        [Display(Name = "LastName", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [StringLength(50, ErrorMessageResourceName = "ErrorLength", ErrorMessageResourceType = typeof(ErrorMessages), MinimumLength = 2)]        
         public string LastName { get; set; }
 
-        [Display(Name = "Password", ResourceType = typeof(Resources_Labels))]
-        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Resources_ErrorMessages))]
-        [StringLength(50, ErrorMessageResourceName = "ErrorMinLength", ErrorMessageResourceType = typeof(Resources_ErrorMessages), MinimumLength = 6)]
+        [Display(Name = "Password", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [StringLength(50, ErrorMessageResourceName = "ErrorMinLength", ErrorMessageResourceType = typeof(ErrorMessages), MinimumLength = 6)]
         [DataType(DataType.Password)]        
         public string Password { get; set; }
 

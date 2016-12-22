@@ -23,14 +23,14 @@ namespace FileServerCore.Web.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources_Labels {
+    public class ErrorMessages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public Resources_Labels() {
+        public ErrorMessages() {
         }
         
         /// <summary>
@@ -40,7 +40,7 @@ namespace FileServerCore.Web.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileServerCore.Web.Resources.Resources.Labels", typeof(Resources_Labels).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileServerCore.Web.Resources.ErrorMessages", typeof(ErrorMessages).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,49 +60,49 @@ namespace FileServerCore.Web.Resources {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Confirm Password.
+        ///   Looks up a localized string similar to The {0} must be between {2} and {1} characters long..
         /// </summary>
-        public static string ConfirmPassword {
+        public static string ErrorLength {
             get {
-                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+                return ResourceManager.GetString("ErrorLength", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Email.
+        ///   Looks up a localized string similar to The {0} must be between {2} and {1} characters long..
         /// </summary>
-        public static string Email {
+        public static string ErrorMinLength {
             get {
-                return ResourceManager.GetString("Email", resourceCulture);
+                return ResourceManager.GetString("ErrorMinLength", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to First Name.
+        ///   Looks up a localized string similar to The password and confirmation password do not match..
         /// </summary>
-        public static string FirstName {
+        public static string ErrorPasswordNotMatch {
             get {
-                return ResourceManager.GetString("FirstName", resourceCulture);
+                return ResourceManager.GetString("ErrorPasswordNotMatch", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Family Name.
+        ///   Looks up a localized string similar to The {0} is reqired..
         /// </summary>
-        public static string LastName {
+        public static string ErrorRequired {
             get {
-                return ResourceManager.GetString("LastName", resourceCulture);
+                return ResourceManager.GetString("ErrorRequired", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Password.
+        ///   Looks up a localized string similar to The {0} is Invalid email..
         /// </summary>
-        public static string Password {
+        public static string InvalidEmail {
             get {
-                return ResourceManager.GetString("Password", resourceCulture);
+                return ResourceManager.GetString("InvalidEmail", resourceCulture);
             }
         }
     }

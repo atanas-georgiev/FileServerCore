@@ -23,14 +23,14 @@ namespace FileServerCore.Web.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources_ErrorMessages_bg {
+    public class Labels {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public Resources_ErrorMessages_bg() {
+        public Labels() {
         }
         
         /// <summary>
@@ -40,7 +40,7 @@ namespace FileServerCore.Web.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileServerCore.Web.Resources.Resources.ErrorMessages.bg", typeof(Resources_ErrorMessages_bg).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileServerCore.Web.Resources.Labels", typeof(Labels).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -60,49 +60,49 @@ namespace FileServerCore.Web.Resources {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Полето {0} трябва да е с дължина между {2} и {1} символа..
+        ///   Looks up a localized string similar to Confirm Password.
         /// </summary>
-        public static string ErrorLength {
+        public static string ConfirmPassword {
             get {
-                return ResourceManager.GetString("ErrorLength", resourceCulture);
+                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Полето {0} трябва да е с дължина между {2} и {1} символа..
+        ///   Looks up a localized string similar to Email.
         /// </summary>
-        public static string ErrorMinLength {
+        public static string Email {
             get {
-                return ResourceManager.GetString("ErrorMinLength", resourceCulture);
+                return ResourceManager.GetString("Email", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Въведените пароли не съвпадат..
+        ///   Looks up a localized string similar to First Name.
         /// </summary>
-        public static string ErrorPasswordNotMatch {
+        public static string FirstName {
             get {
-                return ResourceManager.GetString("ErrorPasswordNotMatch", resourceCulture);
+                return ResourceManager.GetString("FirstName", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Полето {0} е задължително..
+        ///   Looks up a localized string similar to Family Name.
         /// </summary>
-        public static string ErrorRequired {
+        public static string LastName {
             get {
-                return ResourceManager.GetString("ErrorRequired", resourceCulture);
+                return ResourceManager.GetString("LastName", resourceCulture);
             }
         }
-
+        
         /// <summary>
-        ///   Looks up a localized string similar to Полето {0} е невалиден е-мейл адрес..
+        ///   Looks up a localized string similar to Password.
         /// </summary>
-        public static string InvalidEmail {
+        public static string Password {
             get {
-                return ResourceManager.GetString("InvalidEmail", resourceCulture);
+                return ResourceManager.GetString("Password", resourceCulture);
             }
         }
     }

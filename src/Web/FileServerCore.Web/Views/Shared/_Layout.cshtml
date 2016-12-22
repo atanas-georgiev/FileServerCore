@@ -39,9 +39,15 @@
         </div>
     </div>
     <div class="container body-content">
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
         @RenderBody()
         <hr />
         <footer>
+            @System.Globalization.CultureInfo.CurrentCulture.ToString()
             <p>&copy; 2016 - WebApplication1</p>
             <a asp-area="" asp-controller="Home" asp-action="@nameof(HomeController.SetLanguage)" asp-route-culture="bg-BG" asp-route-returnUrl="@Context.Request.Path" class="navbar-brand">
                 bg-BG

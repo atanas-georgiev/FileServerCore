@@ -18,6 +18,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Net.Http.Headers;
 using System;
+using Microsoft.Extensions.Localization;
+using FileServerCore.Web.Resources;
+using System.Threading;
 
 namespace FileServerCore.Web
 {
@@ -63,17 +66,27 @@ namespace FileServerCore.Web
 
             services.AddDistributedMemoryCache();
             services.AddSession();
-            services.AddMemoryCache();            
+            services.AddMemoryCache();
 
-            services.AddMvc(/*options => options.Filters.Add(typeof(RequireHttpsAttribute))*/)
-                .AddViewLocalization(x => x.ResourcesPath = "Resources")
-                .AddDataAnnotationsLocalization()
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+            services.AddLocalization();
+
+            services.AddMvc()
+                .AddDataAnnotationsLocalization();
+                //.AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {                        
-            var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
+        public static IStringLocalizer<Labels> SharedLocalizer { get; private set; }
+
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IStringLocalizer<Labels> SharedLocalizer1)
+        {
+            SharedLocalizer = SharedLocalizer1;
+            //var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
+
+            var supportedCultures = new List<CultureInfo>{
+                 new CultureInfo("en-US"),
+                 new CultureInfo("bg-BG")
+              };
+
             app.UseRequestLocalization(
                  new RequestLocalizationOptions
                  {
@@ -83,6 +96,9 @@ namespace FileServerCore.Web
                                 // UI strings that we have localized.
                                 SupportedUICultures = supportedCultures
                  });
+
+            CultureInfo.DefaultThreadCurrentCulture = supportedCultures.Last();
+            CultureInfo.DefaultThreadCurrentUICulture = supportedCultures.Last();
 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             //loggerFactory.AddDebug();
