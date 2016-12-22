@@ -12,6 +12,12 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 using FileServerCore.Services.Users;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.Net.Http.Headers;
+using System;
 
 namespace FileServerCore.Web
 {
@@ -66,7 +72,18 @@ namespace FileServerCore.Web
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
+        {                        
+            var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
+            app.UseRequestLocalization(
+                 new RequestLocalizationOptions
+                 {
+                     DefaultRequestCulture = new RequestCulture(supportedCultures.First().ToString()),
+                                // Formatting numbers, dates, etc.
+                                SupportedCultures = supportedCultures,
+                                // UI strings that we have localized.
+                                SupportedUICultures = supportedCultures
+                 });
+
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             //loggerFactory.AddDebug();
 
@@ -81,7 +98,15 @@ namespace FileServerCore.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+            app.UseStaticFiles(
+                new StaticFileOptions()
+                {
+                    OnPrepareResponse = (context) =>
+                    {
+                        var headers = context.Context.Response.GetTypedHeaders();
+                        headers.CacheControl = new CacheControlHeaderValue() { MaxAge = TimeSpan.FromDays(100) };
+                    }
+                });
 
             app.UseIdentity();
             app.UseSession();

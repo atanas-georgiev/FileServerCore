@@ -76,5 +76,39 @@
     <ProjectReference Include="..\..\Data\FileServerCore.Data\FileServerCore.Data.csproj" />
     <ProjectReference Include="..\..\Services\FileServerCore.Services.Users\FileServerCore.Services.Users.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\Resources.ErrorMessages.bg.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.ErrorMessages.bg.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Resources.ErrorMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.ErrorMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Resources.Labels.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.Labels.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Resources.ErrorMessages.bg.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.ErrorMessages.bg.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Resources.ErrorMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.ErrorMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Resources.Labels.bg.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Resources.Labels.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Labels.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
