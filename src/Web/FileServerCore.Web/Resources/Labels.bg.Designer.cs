@@ -23,14 +23,14 @@ namespace FileServerCore.Web.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class ErrorMessages {
+    public class Resource1 {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        public ErrorMessages() {
+        public Resource1() {
         }
         
         /// <summary>
@@ -40,7 +40,7 @@ namespace FileServerCore.Web.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileServerCore.Web.Resources.ErrorMessages", typeof(ErrorMessages).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("FileServerCore.Web.Resources.Resource1", typeof(Resource1).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -58,69 +58,6 @@ namespace FileServerCore.Web.Resources {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} must be between {2} and {1} characters long..
-        /// </summary>
-        public static string ErrorLength {
-            get {
-                return ResourceManager.GetString("ErrorLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} must be between {2} and {1} characters long..
-        /// </summary>
-        public static string ErrorMinLength {
-            get {
-                return ResourceManager.GetString("ErrorMinLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The password and confirmation password do not match..
-        /// </summary>
-        public static string ErrorPasswordNotMatch {
-            get {
-                return ResourceManager.GetString("ErrorPasswordNotMatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} is reqired..
-        /// </summary>
-        public static string ErrorRequired {
-            get {
-                return ResourceManager.GetString("ErrorRequired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid username/password.
-        /// </summary>
-        public static string InvalidCredentials {
-            get {
-                return ResourceManager.GetString("InvalidCredentials", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The {0} is Invalid email..
-        /// </summary>
-        public static string InvalidEmail {
-            get {
-                return ResourceManager.GetString("InvalidEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Username already exist.
-        /// </summary>
-        public static string UsernameExist {
-            get {
-                return ResourceManager.GetString("UsernameExist", resourceCulture);
             }
         }
     }

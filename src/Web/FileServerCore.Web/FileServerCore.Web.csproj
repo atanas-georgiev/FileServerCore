@@ -77,10 +77,20 @@
     <ProjectReference Include="..\..\Services\FileServerCore.Services.Users\FileServerCore.Services.Users.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Resources\ErrorMessages.bg.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ErrorMessages.bg.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\ErrorMessages.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorMessages.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\Labels.bg.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Labels.bg.resx</DependentUpon>
     </Compile>
     <Compile Update="Resources\Labels.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -91,6 +101,7 @@
   <ItemGroup>
     <EmbeddedResource Update="Resources\ErrorMessages.bg.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ErrorMessages.bg.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\ErrorMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -98,6 +109,7 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Labels.bg.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Labels.bg.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Resources\Labels.resx">
       <Generator>ResXFileCodeGenerator</Generator>

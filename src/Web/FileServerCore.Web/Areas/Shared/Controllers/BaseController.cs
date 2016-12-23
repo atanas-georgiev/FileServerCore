@@ -9,6 +9,8 @@
     using FileServerCore.Data;
     using FileServerCore.Data.Models;
     using FileServerCore.Services.Users;
+    using Microsoft.Extensions.Localization;
+    using FileServerCore.Web.Resources;
 
     public class BaseController : Controller
     {
@@ -18,8 +20,14 @@
 
         protected readonly UserManager<User> userManager;
 
+        protected readonly IStringLocalizer<Labels> LocalizedLabels;
+
+        protected readonly IStringLocalizer<ErrorMessages> LocalizedErrorMessages;
+
         public BaseController(
             IUserService userService,
+            IStringLocalizer<Labels> localizedLabels,
+            IStringLocalizer<ErrorMessages> localizedErrorMessages,
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             FileServerCoreDbContext dbContext)
@@ -28,6 +36,8 @@
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.dbContext = dbContext;
+            this.LocalizedLabels = localizedLabels;
+            this.LocalizedErrorMessages = localizedErrorMessages;
         }
 
         protected User UserProfile { get; private set; }

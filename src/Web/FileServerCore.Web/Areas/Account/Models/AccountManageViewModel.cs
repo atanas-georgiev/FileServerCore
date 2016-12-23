@@ -1,30 +1,23 @@
 ﻿namespace FileServerCore.Web.Areas.Account.Models
 {
+    using FileServerCore.Web.Resources;
     using System.ComponentModel.DataAnnotations;
-
-    //using FileServerCore.Web.Resources;
-
+    
     public class AccountManageViewModel
     {
-        //[Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Helpers_SharedResource))
-        //]
-        //[EmailAddress(ErrorMessageResourceName = "InvalidEmail",
-        //     ErrorMessageResourceType = typeof(Helpers_SharedResource))]
-        //[Display(Name = "Email", ResourceType = typeof(Helpers_SharedResource))]
+        [Display(Name = "Email", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [EmailAddress(ErrorMessageResourceName = "InvalidEmail", ErrorMessageResourceType = typeof(ErrorMessages))]        
         public string Email { get; set; }
 
-        //[Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Helpers_SharedResource))
-        //]
-        //[StringLength(50, ErrorMessageResourceName = "ErrorLength",
-        //     ErrorMessageResourceType = typeof(Helpers_SharedResource), MinimumLength = 2)]
-        //[Display(Name = "FirstName", ResourceType = typeof(Helpers_SharedResource))]
+        [Display(Name = "FirstName", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]        
+        [StringLength(50, ErrorMessageResourceName = "ErrorLength", ErrorMessageResourceType = typeof(ErrorMessages), MinimumLength = 2)]        
         public string FirstName { get; set; }
 
-        //[Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Helpers_SharedResource))
-        //]
-        //[StringLength(50, ErrorMessageResourceName = "ErrorLength",
-        //     ErrorMessageResourceType = typeof(Helpers_SharedResource), MinimumLength = 2)]
-        //[Display(Name = "LastName", ResourceType = typeof(Helpers_SharedResource))]
+        [Display(Name = "LastName", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]        
+        [StringLength(50, ErrorMessageResourceName = "ErrorLength", ErrorMessageResourceType = typeof(ErrorMessages), MinimumLength = 2)]        
         public string LastName { get; set; }
     }
 }

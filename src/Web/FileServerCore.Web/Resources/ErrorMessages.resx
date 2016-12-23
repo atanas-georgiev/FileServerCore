@@ -112,4 +112,10 @@
   <data name="InvalidEmail" xml:space="preserve">
     <value>The {0} is Invalid email.</value>
   </data>
+  <data name="UsernameExist" xml:space="preserve">
+    <value>Username already exist</value>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid username/password</value>
+  </data>
 </root>

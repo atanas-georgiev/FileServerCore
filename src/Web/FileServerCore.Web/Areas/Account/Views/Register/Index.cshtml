@@ -1,13 +1,13 @@
 ﻿@model AccountRegisterViewModel
 
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = LocString["Register"];
 }
 
 <div class="well">
     <div class="text-center">
-        @*<h1>@LocString["Register"]</h1>
-        <h2>@LocString["CreateLocalAccount"]</h2>*@
+        <h1>@LocString["Register"]</h1>
+        <h2>@LocString["CreateLocalAccount"]</h2>
         <hr/>
     </div>
     <div>
@@ -51,7 +51,7 @@
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <button type="submit" class="btn btn-default">Register</button>
+                    <button type="submit" class="btn btn-default">@LocString["Register"]</button>
                 </div>
             </div>
         </form>

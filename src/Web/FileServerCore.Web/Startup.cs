@@ -73,27 +73,17 @@ namespace FileServerCore.Web
             services.AddMvc()
                 .AddDataAnnotationsLocalization();
                 //.AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
-        }
+        }        
 
-        public static IStringLocalizer<Labels> SharedLocalizer { get; private set; }
-
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IStringLocalizer<Labels> SharedLocalizer1)
-        {
-            SharedLocalizer = SharedLocalizer1;
-            //var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
-
-            var supportedCultures = new List<CultureInfo>{
-                 new CultureInfo("en-US"),
-                 new CultureInfo("bg-BG")
-              };
-
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {            
+            var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
+            
             app.UseRequestLocalization(
                  new RequestLocalizationOptions
                  {
-                     DefaultRequestCulture = new RequestCulture(supportedCultures.First().ToString()),
-                                // Formatting numbers, dates, etc.
-                                SupportedCultures = supportedCultures,
-                                // UI strings that we have localized.
+                     DefaultRequestCulture = new RequestCulture(supportedCultures.First().ToString()),                                
+                                SupportedCultures = supportedCultures,                                
                                 SupportedUICultures = supportedCultures
                  });
 

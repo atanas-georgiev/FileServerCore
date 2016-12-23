@@ -1,27 +1,22 @@
 ﻿namespace FileServerCore.Web.Areas.Account.Models
 {
+    using FileServerCore.Web.Resources;
     using System.ComponentModel.DataAnnotations;
-
-    //using FileServerCore.Web.Resources;
 
     public class AccountLoginViewModel
     {
-        //[Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Helpers_SharedResource))
-        //]
-        //[EmailAddress(ErrorMessageResourceName = "InvalidEmail",
-        //     ErrorMessageResourceType = typeof(Helpers_SharedResource))]
-        //[Display(Name = "Email", ResourceType = typeof(Helpers_SharedResource))]
+        [Display(Name = "Email", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [EmailAddress(ErrorMessageResourceName = "InvalidEmail", ErrorMessageResourceType = typeof(ErrorMessages))]        
         public string Email { get; set; }
 
-        //[Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(Helpers_SharedResource))
-        //]
-        //[StringLength(50, ErrorMessageResourceName = "ErrorMinLength",
-        //     ErrorMessageResourceType = typeof(Helpers_SharedResource), MinimumLength = 6)]
-        //[DataType(DataType.Password)]
-        //[Display(Name = "Password", ResourceType = typeof(Helpers_SharedResource))]
+        [Display(Name = "Password", ResourceType = typeof(Labels))]
+        [Required(ErrorMessageResourceName = "ErrorRequired", ErrorMessageResourceType = typeof(ErrorMessages))]
+        [StringLength(50, ErrorMessageResourceName = "ErrorMinLength", ErrorMessageResourceType = typeof(ErrorMessages), MinimumLength = 6)]
+        [DataType(DataType.Password)]        
         public string Password { get; set; }
 
-        //[Display(Name = "RememberMe", ResourceType = typeof(Helpers_SharedResource))]
+        [Display(Name = "RememberMe", ResourceType = typeof(Labels))]
         public bool RememberMe { get; set; }
     }
 }

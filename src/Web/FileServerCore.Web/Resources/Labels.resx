@@ -112,4 +112,31 @@
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="CreateLocalAccount" xml:space="preserve">
+    <value>Create a new local account</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember Me?</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="LoginLocal" xml:space="preserve">
+    <value>Use a local account to log in</value>
+  </data>
+  <data name="NewUser" xml:space="preserve">
+    <value>Register as a new user?</value>
+  </data>
+  <data name="ExternalProvider" xml:space="preserve">
+    <value>Or use another service to log in</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
 </root>

@@ -14,16 +14,13 @@
     using FileServerCore.Services.Users;
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
+    using FileServerCore.Web.Resources;
+    using Microsoft.Extensions.Localization;
 
     [Area("Account")]
     public class RegisterController : BaseController
     {
-        public RegisterController(
-            IUserService userService,
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            FileServerCoreDbContext dbContext)
-            : base(userService, userManager, signInManager, dbContext)
+        public RegisterController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages, UserManager<User> userManager, SignInManager<User> signInManager, FileServerCoreDbContext dbContext) : base(userService, localizedLabels, localizedErrorMessages, userManager, signInManager, dbContext)
         {
         }
 
@@ -64,8 +61,8 @@
 
                     return RedirectToLocal(model.returnUrl);
                 }
-
-                // this.ModelState.AddModelError("Email", Startup.SharedLocalizer["UsernameExist"]);
+                
+                this.ModelState.AddModelError("Email", LocalizedErrorMessages["UsernameExist"]);
             }
 
             return this.View(model);

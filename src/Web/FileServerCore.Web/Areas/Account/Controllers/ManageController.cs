@@ -12,17 +12,14 @@ namespace FileServerCore.Web.Areas.Account.Controllers
     using FileServerCore.Services.Users;
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
+    using FileServerCore.Web.Resources;
+    using Microsoft.Extensions.Localization;
 
     [Authorize]
     [Area("Account")]
     public class ManageController : BaseController
     {
-        public ManageController(
-            IUserService userService,
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            FileServerCoreDbContext dbcontext)
-            : base(userService, userManager, signInManager, dbcontext)
+        public ManageController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages, UserManager<User> userManager, SignInManager<User> signInManager, FileServerCoreDbContext dbContext) : base(userService, localizedLabels, localizedErrorMessages, userManager, signInManager, dbContext)
         {
         }
 
@@ -45,7 +42,7 @@ namespace FileServerCore.Web.Areas.Account.Controllers
 
             if (user != null && user.UserName != this.UserProfile.UserName)
             {
-                // this.ModelState.AddModelError("Email", Startup.SharedLocalizer["UsernameExist"]);
+                this.ModelState.AddModelError("Email", LocalizedErrorMessages["UsernameExist"]);
             }
             else if (this.ModelState.IsValid)
             {

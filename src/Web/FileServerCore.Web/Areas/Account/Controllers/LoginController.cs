@@ -9,22 +9,19 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Mvc;
-    
+
     using FileServerCore.Data;
     using FileServerCore.Data.Models;
     using FileServerCore.Services.Users;
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
+    using FileServerCore.Web.Resources;
+    using Microsoft.Extensions.Localization;
 
     [Area("Account")]
     public class LoginController : BaseController
     {
-        public LoginController(
-            IUserService userService,
-            UserManager<User> userManager,
-            SignInManager<User> signInManager,
-            FileServerCoreDbContext dbContext)
-            : base(userService, userManager, signInManager, dbContext)
+        public LoginController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages, UserManager<User> userManager, SignInManager<User> signInManager, FileServerCoreDbContext dbContext) : base(userService, localizedLabels, localizedErrorMessages, userManager, signInManager, dbContext)
         {
         }
 
@@ -130,7 +127,7 @@
                     }
                 }
 
-                // this.ModelState.AddModelError("Email", Startup.SharedLocalizer["UsernameExist"]);
+                this.ModelState.AddModelError("Email", LocalizedErrorMessages["UsernameExist"]);
             }
 
             this.ViewData["ReturnUrl"] = returnUrl;
@@ -170,7 +167,7 @@
                 return this.RedirectToLocal(returnUrl);
             }
 
-            // this.ModelState.AddModelError(string.Empty, Startup.SharedLocalizer["InvalidCredentials"]);
+            this.ModelState.AddModelError(string.Empty, LocalizedErrorMessages["InvalidCredentials"]);
             return this.View(model);
         }
     }
