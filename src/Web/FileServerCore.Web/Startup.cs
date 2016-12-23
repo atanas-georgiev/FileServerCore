@@ -71,8 +71,10 @@ namespace FileServerCore.Web
             services.AddLocalization();
 
             services.AddMvc()
-                .AddDataAnnotationsLocalization();
-                //.AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+                .AddDataAnnotationsLocalization()
+                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
+            services.AddKendo();
         }        
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
@@ -125,6 +127,8 @@ namespace FileServerCore.Web
                         template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                     routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
                 });
+
+            app.UseKendo(env);
         }   
     }
 }

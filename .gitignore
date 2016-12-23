@@ -151,7 +151,6 @@ publish/
 PublishScripts/
 
 # NuGet Packages
-*.nupkg
 # The packages folder can be ignored because of Package Restore
 **/packages/*
 # except build/, which is used as an MSBuild target.
@@ -251,3 +250,5 @@ paket-files/
 .idea/
 *.sln.iml
 /src/Web/FileServerCore.Web/wwwroot/lib
+/src/Data/FileServerCore.Data.Common/*.aiis
+*.aiis
