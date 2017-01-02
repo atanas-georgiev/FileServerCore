@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-
-namespace FileServerCore.Web.Controllers
+﻿namespace FileServerCore.Web.Controllers
 {
+    using System;
+
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Localization;
+    using Microsoft.AspNetCore.Mvc;
+
     public class HomeController : Controller
     {
         public IActionResult Index()
         {
-            return View();
+            return this.View();
         }
 
         public IActionResult SetLanguage(string culture, string returnUrl)

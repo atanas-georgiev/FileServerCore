@@ -1,4 +1,4 @@
-﻿namespace FileServerCore.Data.Common.Models
+﻿namespace Avg.Data.Common.Models
 {
     using System;
 

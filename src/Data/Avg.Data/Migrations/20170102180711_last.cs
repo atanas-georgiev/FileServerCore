@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace FileServerCore.Data.Migrations
+namespace Avg.Data.Migrations
 {
     public partial class last : Migration
     {
@@ -15,6 +15,7 @@ namespace FileServerCore.Data.Migrations
                 {
                     Id = table.Column<string>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
+                    Avatar = table.Column<byte[]>(nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     DeletedOn = table.Column<DateTime>(nullable: true),
@@ -28,7 +29,6 @@ namespace FileServerCore.Data.Migrations
                     ModifiedOn = table.Column<DateTime>(nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NotificationMask = table.Column<int>(nullable: false),
                     PasswordHash = table.Column<string>(nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),

@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using FileServerCore.Data;
+using Avg.Data;
 
-namespace FileServerCore.Data.Migrations
+namespace Avg.Data.Migrations
 {
-    [DbContext(typeof(FileServerCoreDbContext))]
-    [Migration("20161221145110_last")]
+    [DbContext(typeof(AvgDbContext))]
+    [Migration("20170102180711_last")]
     partial class last
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,12 +17,14 @@ namespace FileServerCore.Data.Migrations
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("FileServerCore.Data.Models.User", b =>
+            modelBuilder.Entity("Avg.Data.Models.AvgUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<int>("AccessFailedCount");
+
+                    b.Property<byte[]>("Avatar");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -57,8 +59,6 @@ namespace FileServerCore.Data.Migrations
 
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
-
-                    b.Property<int>("NotificationMask");
 
                     b.Property<string>("PasswordHash");
 
@@ -202,7 +202,7 @@ namespace FileServerCore.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("FileServerCore.Data.Models.User")
+                    b.HasOne("Avg.Data.Models.AvgUser")
                         .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -210,7 +210,7 @@ namespace FileServerCore.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("FileServerCore.Data.Models.User")
+                    b.HasOne("Avg.Data.Models.AvgUser")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -223,7 +223,7 @@ namespace FileServerCore.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("FileServerCore.Data.Models.User")
+                    b.HasOne("Avg.Data.Models.AvgUser")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

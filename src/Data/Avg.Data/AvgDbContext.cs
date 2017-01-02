@@ -1,16 +1,16 @@
-﻿namespace FileServerCore.Data
+﻿namespace Avg.Data
 {
     using System;
 
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
-    using FileServerCore.Data.Common.Models;
-    using FileServerCore.Data.Models;
+    using Avg.Data.Common.Models;
+    using Avg.Data.Models;
 
-    public class FileServerCoreDbContext : IdentityDbContext<User>
+    public class AvgDbContext : IdentityDbContext<AvgUser>
     {
-        public FileServerCoreDbContext(DbContextOptions options)
+        public AvgDbContext(DbContextOptions options)
             : base(options)
         {
         }

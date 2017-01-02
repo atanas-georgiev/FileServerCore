@@ -1,4 +1,4 @@
-﻿namespace FileServerCore.Data.Common
+﻿namespace Avg.Data.Common
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -6,7 +6,7 @@
 
     using Microsoft.EntityFrameworkCore;
 
-    using FileServerCore.Data.Common.Models;
+    using Avg.Data.Common.Models;
 
     public interface IRepository<T> : IRepository<T, string>
         where T : class, IHavePrimaryKey<string>, IDeletableEntity, IAuditInfo

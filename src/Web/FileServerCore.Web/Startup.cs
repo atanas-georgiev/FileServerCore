@@ -4,23 +4,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using FileServerCore.Data;
-using FileServerCore.Data.Common;
+using Avg.Data;
+using Avg.Data.Common;
 using Microsoft.EntityFrameworkCore;
-using FileServerCore.Data.Models;
+using Avg.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
-using FileServerCore.Services.Users;
-using System.Collections.Generic;
+using Avg.Services.Users;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Net.Http.Headers;
 using System;
-using Microsoft.Extensions.Localization;
-using FileServerCore.Web.Resources;
-using System.Threading;
+using FileServerCore.Web.Infrastructure.Middlewares;
 
 namespace FileServerCore.Web
 {
@@ -47,14 +43,14 @@ namespace FileServerCore.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<FileServerCoreDbContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));
-            services.AddScoped<DbContext, FileServerCoreDbContext>();
+            services.AddDbContext<AvgDbContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));
+            services.AddScoped<DbContext, AvgDbContext>();
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<,>), typeof(Repository<,>)));
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<>), typeof(Repository<>)));
 
             services.AddScoped<IUserService, UserService>();
 
-            services.AddIdentity<User, IdentityRole>(
+            services.AddIdentity<AvgUser, IdentityRole>(
                 o =>
                 {
                     o.Password.RequireDigit = false;
@@ -62,7 +58,7 @@ namespace FileServerCore.Web
                     o.Password.RequireUppercase = false;
                     o.Password.RequireNonAlphanumeric = false;
                     o.Password.RequiredLength = 6;
-                }).AddEntityFrameworkStores<FileServerCoreDbContext>().AddDefaultTokenProviders();
+                }).AddEntityFrameworkStores<AvgDbContext>().AddDefaultTokenProviders();
 
             services.AddDistributedMemoryCache();
             services.AddSession();
@@ -77,7 +73,7 @@ namespace FileServerCore.Web
             services.AddKendo();
         }        
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IUserService userService)
         {            
             var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
             
@@ -98,8 +94,6 @@ namespace FileServerCore.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
-                //app.UseBrowserLink();
             }
             else
             {
@@ -118,6 +112,8 @@ namespace FileServerCore.Web
 
             app.UseIdentity();
             app.UseSession();
+
+            app.AddAutomaticMigration(userService, scopeFactory, this.Configuration);
 
             app.UseMvc(
                 routes =>

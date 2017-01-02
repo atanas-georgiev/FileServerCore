@@ -7,9 +7,9 @@ namespace FileServerCore.Web.Areas.Account.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
-    using FileServerCore.Data;
-    using FileServerCore.Data.Models;
-    using FileServerCore.Services.Users;
+    using Avg.Data;
+    using Avg.Data.Models;
+    using Avg.Services.Users;
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Resources;
@@ -19,7 +19,8 @@ namespace FileServerCore.Web.Areas.Account.Controllers
     [Area("Account")]
     public class ManageController : BaseController
     {
-        public ManageController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages, UserManager<User> userManager, SignInManager<User> signInManager, FileServerCoreDbContext dbContext) : base(userService, localizedLabels, localizedErrorMessages, userManager, signInManager, dbContext)
+        public ManageController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages)
+            : base(userService, localizedLabels, localizedErrorMessages)
         {
         }
 
@@ -51,7 +52,7 @@ namespace FileServerCore.Web.Areas.Account.Controllers
                 this.UserProfile.FirstName = model.FirstName;
                 this.UserProfile.LastName = model.LastName;
 
-                this.UserService.Update(this.UserProfile);
+                // this.UserService.Update(this.UserProfile);
                 return this.RedirectToAction("Index", "Home", new { area = string.Empty });
             }
 

@@ -1,8 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using FileServerCore.Data.Models
+@using Avg.Data.Models
 
-@inject SignInManager<User> SignInManager
-@inject UserManager<User> UserManager
+@inject SignInManager<AvgUser> SignInManager
+@inject UserManager<AvgUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {

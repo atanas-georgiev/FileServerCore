@@ -1,4 +1,4 @@
-﻿namespace FileServerCore.Data.Common
+﻿namespace Avg.Data.Common
 {
     using System;
     using System.Linq;
@@ -6,10 +6,10 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-    using FileServerCore.Data.Common.Models;
+    using Avg.Data.Common.Models;
 
-    public class Repository<T, TKey> : IRepository<T, TKey>
-        where T : BaseModel<TKey>, IHavePrimaryKey<TKey> where TKey : struct
+    public class Repository<T> : IRepository<T>
+        where T : class, IHavePrimaryKey<string>, IDeletableEntity, IAuditInfo
     {
         public Repository(DbContext context)
         {
@@ -53,7 +53,7 @@
             this.Save();
         }
 
-        public virtual void Delete(TKey id)
+        public virtual void Delete(string id)
         {
             var entity = this.GetById(id);
 
@@ -65,9 +65,9 @@
             this.Save();
         }
 
-        public T GetById(TKey id)
+        public T GetById(string id)
         {
-            return this.DbSet.FirstOrDefault(x => x.Id.Equals(id));
+            return this.All().FirstOrDefault(x => x.Id == id);
         }
 
         public void HardDelete(T entity)

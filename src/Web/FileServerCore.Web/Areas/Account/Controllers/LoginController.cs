@@ -5,27 +5,34 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-    using Microsoft.AspNetCore.Mvc;
+    using Avg.Data.Models;
+    using Avg.Services.Users;
 
-    using FileServerCore.Data;
-    using FileServerCore.Data.Models;
-    using FileServerCore.Services.Users;
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Resources;
+
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
 
     [Area("Account")]
     public class LoginController : BaseController
     {
-        public LoginController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages, UserManager<User> userManager, SignInManager<User> signInManager, FileServerCoreDbContext dbContext) : base(userService, localizedLabels, localizedErrorMessages, userManager, signInManager, dbContext)
+        private readonly SignInManager<AvgUser> signInManager;
+
+        public LoginController(
+            SignInManager<AvgUser> signInManager,
+            IUserService userService,
+            IStringLocalizer<Labels> localizedLabels,
+            IStringLocalizer<ErrorMessages> localizedErrorMessages)
+            : base(userService, localizedLabels, localizedErrorMessages)
         {
+            this.signInManager = signInManager;
         }
 
-        public async Task<ActionResult> Exit()
+        public async Task<IActionResult> Exit()
         {
             await this.signInManager.SignOutAsync();
             return this.RedirectToAction("Index", "Home", new { area = string.Empty });
@@ -34,7 +41,7 @@
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl = null)
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             var redirectUrl = this.Url.Action("ExternalLoginCallback", new { ReturnUrl = returnUrl });
             var properties = this.signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
@@ -42,26 +49,24 @@
         }
 
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl, string remoteError = null)
+        public async Task<IActionResult> ExternalLoginCallback(string returnUrl, string remoteError = null)
         {
             if (remoteError != null)
             {
                 this.ModelState.AddModelError(string.Empty, $"Error from external provider: {remoteError}");
-                return this.View(nameof(Index));
+                return this.View(nameof(this.Index));
             }
 
             var info = await this.signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return this.RedirectToAction(nameof(Index));
+                return this.RedirectToAction(nameof(this.Index));
             }
 
-            var result =
-                await
-                    this.signInManager.ExternalLoginSignInAsync(
-                        info.LoginProvider,
-                        info.ProviderKey,
-                        isPersistent: false);
+            var result = await this.signInManager.ExternalLoginSignInAsync(
+                             info.LoginProvider,
+                             info.ProviderKey,
+                             isPersistent: false);
 
             if (result.Succeeded)
             {
@@ -80,8 +85,14 @@
                     new AccountExternalLoginConfirmationViewModel
                         {
                             Email = email == null ? string.Empty : email.Value,
-                            FirstName = firstName == null ? string.Empty : firstName.Value,
-                            LastName = lastName == null ? string.Empty : lastName.Value
+                            FirstName =
+                                firstName == null
+                                    ? string.Empty
+                                    : firstName.Value,
+                            LastName =
+                                lastName == null
+                                    ? string.Empty
+                                    : lastName.Value
                         });
             }
         }
@@ -89,7 +100,7 @@
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(
+        public async Task<IActionResult> ExternalLoginConfirmation(
             AccountExternalLoginConfirmationViewModel model,
             string returnUrl = null)
         {
@@ -101,7 +112,7 @@
                     return this.View("ExternalLoginFailure");
                 }
 
-                var user = new User
+                var user = new AvgUser
                                {
                                    UserName = model.Email,
                                    Email = model.Email,
@@ -110,24 +121,23 @@
                                    LastName = model.LastName
                                };
 
-                var result = await this.userManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await this.userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
-                    {
-                        await this.signInManager.SignInAsync(user, isPersistent: false);
+                // var result = await this.userManager.CreateAsync(user);
+                // if (result.Succeeded)
+                // {
+                // result = await this.userManager.AddLoginAsync(user, info);
+                // if (result.Succeeded)
+                // {
+                // await this.signInManager.SignInAsync(user, isPersistent: false);
 
-                        var role = this.dbContext.Roles.First(x => x.Name == "User"/*MyServerRoles.User.ToString()*/);
-                        this.dbContext.UserRoles.Add(
-                            new IdentityUserRole<string>() { RoleId = role.Id, UserId = user.Id });
-                        this.dbContext.SaveChanges();
+                // var role = this.dbContext.Roles.First(x => x.Name == "User"/*MyServerRoles.User.ToString()*/);
+                // this.dbContext.UserRoles.Add(
+                // new IdentityUserRole<string>() { RoleId = role.Id, UserId = user.Id });
+                // this.dbContext.SaveChanges();
 
-                        return this.RedirectToLocal(returnUrl);
-                    }
-                }
-
-                this.ModelState.AddModelError("Email", LocalizedErrorMessages["UsernameExist"]);
+                // return this.RedirectToLocal(returnUrl);
+                // }
+                // }
+                this.ModelState.AddModelError("Email", this.LocalizedErrorMessages["UsernameExist"]);
             }
 
             this.ViewData["ReturnUrl"] = returnUrl;
@@ -135,13 +145,13 @@
         }
 
         [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
+        public IActionResult ExternalLoginFailure()
         {
             return this.View();
         }
 
         [AllowAnonymous]
-        public ActionResult Index(string returnUrl)
+        public IActionResult Index(string returnUrl)
         {
             this.ViewData["ReturnUrl"] = returnUrl;
             return this.View();
@@ -150,7 +160,7 @@
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(AccountLoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Index(AccountLoginViewModel model, string returnUrl = null)
         {
             this.ViewData["ReturnUrl"] = returnUrl;
 
@@ -159,15 +169,18 @@
                 return this.View(model);
             }
 
-            var result =
-                await this.signInManager.PasswordSignInAsync(model.Email, model.Password, true, lockoutOnFailure: false);
+            var result = await this.signInManager.PasswordSignInAsync(
+                             model.Email,
+                             model.Password,
+                             true,
+                             lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
                 return this.RedirectToLocal(returnUrl);
             }
 
-            this.ModelState.AddModelError(string.Empty, LocalizedErrorMessages["InvalidCredentials"]);
+            this.ModelState.AddModelError(string.Empty, this.LocalizedErrorMessages["InvalidCredentials"]);
             return this.View(model);
         }
     }
