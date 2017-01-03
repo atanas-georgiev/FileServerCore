@@ -111,6 +111,19 @@ namespace FileServerCore.Web
                 });
 
             app.UseIdentity();
+
+            app.UseFacebookAuthentication(new FacebookOptions()
+            {
+                AppId = Configuration["Security:ExternalProviders:Facebook:Id"],
+                AppSecret = Configuration["Security:ExternalProviders:Facebook:Secret"]
+            });
+
+            app.UseGoogleAuthentication(new GoogleOptions()
+            {
+                ClientId = Configuration["Security:ExternalProviders:Google:Id"],
+                ClientSecret = Configuration["Security:ExternalProviders:Google:Secret"]
+            });
+
             app.UseSession();
 
             app.AddAutomaticMigration(userService, scopeFactory, this.Configuration);
