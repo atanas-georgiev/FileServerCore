@@ -10,6 +10,7 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Avg.Data.Models;
 
     public static class MigrationMiddleware
     {
@@ -27,8 +28,7 @@
                     if (!context.Roles.Any())
                     {
                         SeedRoles(userService, configuration);
-
-                        // SeedAdmin(context);
+                        SeedUsers(userService, configuration);
                     }
                 }
                 catch
@@ -37,10 +37,8 @@
 
                     if (!context.Roles.Any())
                     {
-                        var roles = configuration.GetSection("Security").GetSection("SupportedRoles").GetChildren().Select(c => c.Value).ToList();
-                        userService.AddRoles(roles);
-
-                        // SeedAdmin(context);
+                        SeedRoles(userService, configuration);
+                        SeedUsers(userService, configuration);
                     }
                 }
             }
@@ -48,7 +46,21 @@
 
         private static void SeedRoles(IUserService userService, IConfiguration configuration)
         {
-            
+            var roles = configuration.GetSection("Security").GetSection("SupportedRoles").GetChildren().Select(c => c.Value).ToList();
+            userService.AddRoles(roles);
+        }
+
+        private static void SeedUsers(IUserService userService, IConfiguration configuration)
+        {
+            var initialUser = configuration.GetSection("Security").GetSection("InitialUser").GetChildren();
+            var user = new AvgUser()
+            {
+                Email = initialUser.First(x => x.Key == "Email").Value,
+                FirstName = initialUser.First(x => x.Key == "FirstName").Value,
+                LastName = initialUser.First(x => x.Key == "LastName").Value
+            };
+
+            userService.AddAsync(user, initialUser.First(x => x.Key == "Password").Value);
         }
     }
 }
