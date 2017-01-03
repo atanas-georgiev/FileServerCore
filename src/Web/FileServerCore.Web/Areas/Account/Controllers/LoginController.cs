@@ -112,31 +112,22 @@
                     return this.View("ExternalLoginFailure");
                 }
 
-                var user = new AvgUser
-                               {
-                                   UserName = model.Email,
-                                   Email = model.Email,
-                                   CreatedOn = DateTime.Now,
-                                   FirstName = model.FirstName,
-                                   LastName = model.LastName
-                               };
+                //// TODO: avatar
+                var user = await this.UserService.AddAsync(
+                               model.Email,
+                               model.FirstName,
+                               model.LastName,
+                               null,
+                               null);
 
-                // var result = await this.userManager.CreateAsync(user);
-                // if (result.Succeeded)
-                // {
-                // result = await this.userManager.AddLoginAsync(user, info);
-                // if (result.Succeeded)
-                // {
-                // await this.signInManager.SignInAsync(user, isPersistent: false);
-
-                // var role = this.dbContext.Roles.First(x => x.Name == "User"/*MyServerRoles.User.ToString()*/);
-                // this.dbContext.UserRoles.Add(
-                // new IdentityUserRole<string>() { RoleId = role.Id, UserId = user.Id });
-                // this.dbContext.SaveChanges();
-
-                // return this.RedirectToLocal(returnUrl);
-                // }
-                // }
+                if (user != null)
+                {
+                    //// TODO: Add to role
+                    await this.UserService.AddExternalLoginInfoAsync(user, info);
+                    await this.signInManager.SignInAsync(user, false);
+                    return this.RedirectToLocal(returnUrl);
+                }
+                
                 this.ModelState.AddModelError("Email", this.LocalizedErrorMessages["UsernameExist"]);
             }
 
