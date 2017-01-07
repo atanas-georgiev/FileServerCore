@@ -1,35 +1,37 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using Avg.Data;
-using Avg.Data.Common;
-using Microsoft.EntityFrameworkCore;
-using Avg.Data.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
-using Avg.Services.Users;
-using System.Globalization;
-using System.Linq;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.Net.Http.Headers;
-using System;
-using FileServerCore.Web.Infrastructure.Middlewares;
-
-namespace FileServerCore.Web
+﻿namespace FileServerCore.Web
 {
+    using System;
+    using System.Globalization;
+    using System.Linq;
+
+    using Avg.Data;
+    using Avg.Data.Common;
+    using Avg.Data.Models;
+    using Avg.Services.Users;
+
+    using FileServerCore.Web.Infrastructure.Middlewares;
+
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.AspNetCore.Localization;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Net.Http.Headers;
+
+    using Newtonsoft.Json.Serialization;
+
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; }
-
         public Startup(IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            var builder =
+                new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsDevelopment())
             {
@@ -38,12 +40,95 @@ namespace FileServerCore.Web
             }
 
             builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
+            this.Configuration = builder.Build();
+        }
+
+        public IConfigurationRoot Configuration { get; }
+
+        public void Configure(
+            IApplicationBuilder app,
+            IHostingEnvironment env,
+            ILoggerFactory loggerFactory,
+            IServiceScopeFactory scopeFactory,
+            IUserService userService)
+        {
+            var supportedCultures =
+                this.Configuration.GetSection("SupportedCultures")
+                    .GetChildren()
+                    .Select(c => new CultureInfo(c.Value))
+                    .ToList();
+
+            app.UseRequestLocalization(
+                new RequestLocalizationOptions
+                    {
+                        DefaultRequestCulture =
+                            new RequestCulture(supportedCultures.First().ToString()),
+                        SupportedCultures = supportedCultures,
+                        SupportedUICultures = supportedCultures
+                    });
+
+            CultureInfo.DefaultThreadCurrentCulture = supportedCultures.Last();
+            CultureInfo.DefaultThreadCurrentUICulture = supportedCultures.Last();
+
+            loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
+
+            // loggerFactory.AddDebug();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+            app.UseStaticFiles(
+                new StaticFileOptions()
+                    {
+                        OnPrepareResponse = (context) =>
+                            {
+                                var headers = context.Context.Response.GetTypedHeaders();
+                                headers.CacheControl = new CacheControlHeaderValue() { MaxAge = TimeSpan.FromDays(100) };
+                            }
+                    });
+
+            app.UseIdentity();
+
+            app.UseFacebookAuthentication(
+                new FacebookOptions()
+                    {
+                        AppId = this.Configuration["Security:ExternalProviders:Facebook:Id"],
+                        AppSecret = this.Configuration["Security:ExternalProviders:Facebook:Secret"]
+                    });
+
+            app.UseGoogleAuthentication(
+                new GoogleOptions()
+                    {
+                        ClientId = this.Configuration["Security:ExternalProviders:Google:Id"],
+                        ClientSecret = this.Configuration["Security:ExternalProviders:Google:Secret"]
+                    });
+
+            app.UseSession();
+
+            app.AddAutomaticMigration(userService, scopeFactory, this.Configuration);
+
+            app.UseMvc(
+                routes =>
+                    {
+                        routes.MapRoute(
+                            name: "areaRoute",
+                            template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                        routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
+                    });
+
+            app.AddAutomaticMigration();
+            app.UseKendo(env);
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AvgDbContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));
+            services.AddDbContext<AvgDbContext>(
+                options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));
             services.AddScoped<DbContext, AvgDbContext>();
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<,>), typeof(Repository<,>)));
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<>), typeof(Repository<>)));
@@ -52,13 +137,13 @@ namespace FileServerCore.Web
 
             services.AddIdentity<AvgUser, IdentityRole>(
                 o =>
-                {
-                    o.Password.RequireDigit = false;
-                    o.Password.RequireLowercase = false;
-                    o.Password.RequireUppercase = false;
-                    o.Password.RequireNonAlphanumeric = false;
-                    o.Password.RequiredLength = 6;
-                }).AddEntityFrameworkStores<AvgDbContext>().AddDefaultTokenProviders();
+                    {
+                        o.Password.RequireDigit = false;
+                        o.Password.RequireLowercase = false;
+                        o.Password.RequireUppercase = false;
+                        o.Password.RequireNonAlphanumeric = false;
+                        o.Password.RequiredLength = 6;
+                    }).AddEntityFrameworkStores<AvgDbContext>().AddDefaultTokenProviders();
 
             services.AddDistributedMemoryCache();
             services.AddSession();
@@ -71,73 +156,6 @@ namespace FileServerCore.Web
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
             services.AddKendo();
-        }        
-
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IUserService userService)
-        {            
-            var supportedCultures = this.Configuration.GetSection("SupportedCultures").GetChildren().Select(c => new CultureInfo(c.Value)).ToList();
-            
-            app.UseRequestLocalization(
-                 new RequestLocalizationOptions
-                 {
-                     DefaultRequestCulture = new RequestCulture(supportedCultures.First().ToString()),                                
-                                SupportedCultures = supportedCultures,                                
-                                SupportedUICultures = supportedCultures
-                 });
-
-            CultureInfo.DefaultThreadCurrentCulture = supportedCultures.Last();
-            CultureInfo.DefaultThreadCurrentUICulture = supportedCultures.Last();
-
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            //loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            app.UseStaticFiles(
-                new StaticFileOptions()
-                {
-                    OnPrepareResponse = (context) =>
-                    {
-                        var headers = context.Context.Response.GetTypedHeaders();
-                        headers.CacheControl = new CacheControlHeaderValue() { MaxAge = TimeSpan.FromDays(100) };
-                    }
-                });
-
-            app.UseIdentity();
-
-            app.UseFacebookAuthentication(new FacebookOptions()
-            {
-                AppId = Configuration["Security:ExternalProviders:Facebook:Id"],
-                AppSecret = Configuration["Security:ExternalProviders:Facebook:Secret"]
-            });
-
-            app.UseGoogleAuthentication(new GoogleOptions()
-            {
-                ClientId = Configuration["Security:ExternalProviders:Google:Id"],
-                ClientSecret = Configuration["Security:ExternalProviders:Google:Secret"]
-            });
-
-            app.UseSession();
-
-            app.AddAutomaticMigration(userService, scopeFactory, this.Configuration);
-
-            app.UseMvc(
-                routes =>
-                {                 
-                    routes.MapRoute(
-                        name: "areaRoute",
-                        template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                    routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
-                });
-
-            app.UseKendo(env);
-        }   
+        }
     }
 }

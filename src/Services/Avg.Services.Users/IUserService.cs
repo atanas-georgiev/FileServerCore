@@ -29,6 +29,10 @@
 
         Task UpdateAsync(AvgUser user);
 
-        void AddRoles(IList<string> roles);
+        void AddRoles(string[] roles);
+
+        bool RemoveRoles(string[] roles);
+
+        IQueryable<string> GetAllRoles();
     }
 }

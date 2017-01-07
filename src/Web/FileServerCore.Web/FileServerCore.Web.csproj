@@ -8,7 +8,6 @@
   <ItemGroup>
     <Compile Include="**\*.cs" Exclude="$(GlobalExclude)" />
     <EmbeddedResource Include="**\*.resx" Exclude="$(GlobalExclude)" />
-    <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
@@ -126,6 +125,7 @@
     <ProjectReference Include="..\..\Data\Avg.Data.Common\Avg.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\Avg.Data.Models\Avg.Data.Models.csproj" />
     <ProjectReference Include="..\..\Data\Avg.Data\Avg.Data.csproj" />
+    <ProjectReference Include="..\..\Services\Avg.Services.Mappings\Avg.Services.Mappings.csproj" />
     <ProjectReference Include="..\..\Services\Avg.Services.Users\Avg.Services.Users.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

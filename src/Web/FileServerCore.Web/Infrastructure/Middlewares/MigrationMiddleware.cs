@@ -1,16 +1,15 @@
 ﻿namespace FileServerCore.Web.Infrastructure.Middlewares
 {
-    using System;
     using System.Linq;
 
     using Avg.Data;
+    using Avg.Data.Models;
     using Avg.Services.Users;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Avg.Data.Models;
 
     public static class MigrationMiddleware
     {
@@ -46,7 +45,12 @@
 
         private static void SeedRoles(IUserService userService, IConfiguration configuration)
         {
-            var roles = configuration.GetSection("Security").GetSection("SupportedRoles").GetChildren().Select(c => c.Value).ToList();
+            var roles =
+                configuration.GetSection("Security")
+                    .GetSection("SupportedRoles")
+                    .GetChildren()
+                    .Select(c => c.Value)
+                    .ToArray();
             userService.AddRoles(roles);
         }
 
@@ -54,11 +58,11 @@
         {
             var initialUser = configuration.GetSection("Security").GetSection("InitialUser").GetChildren();
             var user = new AvgUser()
-            {
-                Email = initialUser.First(x => x.Key == "Email").Value,
-                FirstName = initialUser.First(x => x.Key == "FirstName").Value,
-                LastName = initialUser.First(x => x.Key == "LastName").Value
-            };
+                           {
+                               Email = initialUser.First(x => x.Key == "Email").Value,
+                               FirstName = initialUser.First(x => x.Key == "FirstName").Value,
+                               LastName = initialUser.First(x => x.Key == "LastName").Value
+                           };
 
             userService.AddAsync(user, initialUser.First(x => x.Key == "Password").Value);
         }

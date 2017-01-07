@@ -79,7 +79,7 @@
             await this.userManager.UpdateAsync(user);
         }
 
-        public void AddRoles(IList<string> roles)
+        public void AddRoles(string[] roles)
         {
             this.context.Roles.AddRange(roles.Select(r => new IdentityRole(r)));
             this.context.SaveChanges();
@@ -88,6 +88,25 @@
         public async Task AddExternalLoginInfoAsync(AvgUser user, ExternalLoginInfo info)
         {
             await this.userManager.AddLoginAsync(user, info);
+        }
+
+        public bool RemoveRoles(string[] roles)
+        {
+            if (roles.All(role => this.userManager.GetUsersInRoleAsync(role).Result.Count <= 0))
+            {
+                var rolesDb = this.context.Roles.Where(x => roles.Contains(x.Name));
+
+                this.context.RemoveRange(rolesDb);
+                this.context.SaveChanges();
+                return true;
+            }
+
+            return false;
+        }
+
+        public IQueryable<string> GetAllRoles()
+        {
+            return this.context.Roles.Select(r => r.Name);
         }
     }
 }
