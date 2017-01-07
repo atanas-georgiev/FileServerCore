@@ -7,11 +7,15 @@
 
     using Avg.Data.Models;
 
+    using Microsoft.AspNetCore.Identity;
+
     public interface IUserService
     {
         Task<AvgUser> AddAsync(AvgUser user, string password);
 
         Task<AvgUser> AddAsync(string email, string firstName, string lastName, string password, byte[] avatar);
+
+        Task AddExternalLoginInfoAsync(AvgUser user, ExternalLoginInfo info);
 
         Task DeleteAsync(string id);
 

@@ -84,5 +84,10 @@
             this.context.Roles.AddRange(roles.Select(r => new IdentityRole(r)));
             this.context.SaveChanges();
         }
+
+        public async Task AddExternalLoginInfoAsync(AvgUser user, ExternalLoginInfo info)
+        {
+            await this.userManager.AddLoginAsync(user, info);
+        }
     }
 }
