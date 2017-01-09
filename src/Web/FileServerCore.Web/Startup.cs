@@ -3,12 +3,16 @@
     using System;
     using System.Globalization;
     using System.Linq;
+    using System.Reflection;
+
+    using AutoMapper;
 
     using Avg.Data;
     using Avg.Data.Common;
     using Avg.Data.Models;
     using Avg.Services.Users;
 
+    using FileServerCore.Web.Areas.Admin.Models;
     using FileServerCore.Web.Infrastructure.Middlewares;
 
     using Microsoft.AspNetCore.Builder;
@@ -19,10 +23,13 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyModel;
     using Microsoft.Extensions.Logging;
     using Microsoft.Net.Http.Headers;
 
     using Newtonsoft.Json.Serialization;
+
+    using StructureMap;
 
     public class Startup
     {
@@ -50,7 +57,8 @@
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
             IServiceScopeFactory scopeFactory,
-            IUserService userService)
+            IUserService userService,
+            IServiceProvider provider)
         {
             var supportedCultures =
                 this.Configuration.GetSection("SupportedCultures")
@@ -121,7 +129,7 @@
                         routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
                     });
 
-            app.AddAutomaticMigration();
+      
             app.UseKendo(env);
         }
 
@@ -156,6 +164,8 @@
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
             services.AddKendo();
+
+            services.AddAutoMapper();
         }
     }
 }

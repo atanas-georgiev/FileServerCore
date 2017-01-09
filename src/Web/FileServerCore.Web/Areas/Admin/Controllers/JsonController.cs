@@ -1,10 +1,15 @@
 ﻿namespace FileServerCore.Web.Areas.Admin.Controllers
 {
-    using Avg.Services.Mappings;
+    using System.Linq;
+
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+
     using Avg.Services.Users;
 
     using FileServerCore.Web.Areas.Admin.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
+    using FileServerCore.Web.Infrastructure.Middlewares;
     using FileServerCore.Web.Resources;
 
     using Kendo.Mvc.Extensions;
@@ -54,7 +59,9 @@
 
         public ActionResult RolesRead([DataSourceRequest] DataSourceRequest request)
         {
-            return this.Json(this.UserService.GetAllRoles().To<RolesViewModel>().ToDataSourceResult(request));
+            var form = this.UserService.GetAllRoles().ProjectTo<RolesViewModel>();
+
+            return this.Json(this.UserService.GetAllRoles().ProjectTo<RolesViewModel>().ToDataSourceResult(request));
         }
     }
 }

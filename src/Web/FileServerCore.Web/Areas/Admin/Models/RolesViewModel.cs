@@ -5,19 +5,29 @@
 
     using AutoMapper;
 
-    using Avg.Services.Mappings;
+    using Avg.Services.Users;
 
-    public class RolesViewModel : IMapFrom<string>, IHaveCustomMappings
+    using FileServerCore.Web.Infrastructure.Middlewares;
+
+    public class RolesViewModel : Profile
     {
+        public RolesViewModel(IUserService userService)
+        {
+            this.CreateMap<string, RolesViewModel>().ForMember(m => m.Name, opt => opt.MapFrom(c => c));
+        }
+
         [UIHint("KendoTextBox")]
         public string Name { get; set; }
 
         [ScaffoldColumn(false)]
         public int UsersCount { get; set; }
-
-        public void CreateMappings(IMapperConfigurationExpression configuration)
-        {
-            configuration.CreateMap<string, RolesViewModel>().ForMember(m => m.Name, opt => opt.MapFrom(c => c));
-        }
     }
+
+    //public class RolesViewModelMapping : Profile
+    //{
+    //    public RolesViewModelMapping()
+    //    {
+    //        this.CreateMap<string, RolesViewModel>().ForMember(m => m.Name, opt => opt.MapFrom(c => c));
+    //    }
+    //}
 }
