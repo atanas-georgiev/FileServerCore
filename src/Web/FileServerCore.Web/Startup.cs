@@ -30,6 +30,7 @@
     using Newtonsoft.Json.Serialization;
 
     using StructureMap;
+    using FileServerCore.Web.Infrastructure.Helpers;
 
     public class Startup
     {
@@ -164,6 +165,8 @@
                 .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
             services.AddKendo();
+            
+            ServicesHelper.Initialize(services);
 
             services.AddAutoMapper();
         }

@@ -64,7 +64,7 @@
                                LastName = initialUser.First(x => x.Key == "LastName").Value
                            };
 
-            userService.AddAsync(user, initialUser.First(x => x.Key == "Password").Value);
+            userService.AddAsync(user, initialUser.First(x => x.Key == "Password").Value, initialUser.First(x => x.Key == "Role").Value);
         }
     }
 }

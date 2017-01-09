@@ -25,7 +25,7 @@
             this.context = context;
         }
 
-        public async Task<AvgUser> AddAsync(AvgUser user, string password)
+        public async Task<AvgUser> AddAsync(AvgUser user, string password, string role = null)
         {
             if (user != null)
             {
@@ -35,6 +35,11 @@
 
                 if (result.Succeeded)
                 {
+                    if (role != null)
+                    {
+                        await this.AddUserInRole(user, role);
+                    }
+
                     return user;
                 }
             }
@@ -42,11 +47,11 @@
             return null;
         }
 
-        public async Task<AvgUser> AddAsync(string email, string firstName, string lastName, string password, byte[] avatar)
+        public async Task<AvgUser> AddAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null)
         {
             var user = new AvgUser { Email = email, FirstName = firstName, LastName = lastName, Avatar = avatar };
 
-            return await this.AddAsync(user, password);
+            return await this.AddAsync(user, password, role);
         }
 
         public async Task DeleteAsync(AvgUser user)
@@ -92,7 +97,7 @@
 
         public bool RemoveRoles(string[] roles)
         {
-            if (roles.All(role => this.userManager.GetUsersInRoleAsync(role).Result.Count <= 0))
+            if (roles.All(role => this.GetAllUsersinRole(role).Count() <= 0))
             {
                 var rolesDb = this.context.Roles.Where(x => roles.Contains(x.Name));
 
@@ -107,6 +112,34 @@
         public IQueryable<string> GetAllRoles()
         {
             return this.context.Roles.Select(r => r.Name);
+        }
+
+        public IQueryable<AvgUser> GetAllUsersinRole(string role)
+        {
+            var roleDb = this.context.Roles.FirstOrDefault(x => x.Name == role);
+
+            if (roleDb != null)
+            {
+                return this.context.Users.Where(x => x.Roles.Any(r => r.RoleId == roleDb.Id));
+            }
+
+            return new List<AvgUser>().AsQueryable();
+
+            var a = this.userManager.GetUsersInRoleAsync(role).Result;
+            return this.userManager.GetUsersInRoleAsync(role).Result.AsQueryable();
+        }
+
+        public async Task AddUserInRole(AvgUser user, string role)
+        {
+            if (!(await userManager.IsInRoleAsync(user, role)))
+            {
+                this.context.UserRoles.Add(new IdentityUserRole<string>()
+                {
+                    RoleId = this.context.Roles.First(x => x.Name == role).Id,
+                    UserId = user.Id
+                });
+                this.context.SaveChanges();
+            }
         }
     }
 }

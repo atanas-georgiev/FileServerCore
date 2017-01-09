@@ -17,6 +17,7 @@
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
+    using System.Threading.Tasks;
 
     // [Authorize(Roles = "Admin")]
     [Area("Admin")]
@@ -58,9 +59,7 @@
         }
 
         public ActionResult RolesRead([DataSourceRequest] DataSourceRequest request)
-        {
-            var form = this.UserService.GetAllRoles().ProjectTo<RolesViewModel>();
-
+        {            
             return this.Json(this.UserService.GetAllRoles().ProjectTo<RolesViewModel>().ToDataSourceResult(request));
         }
     }

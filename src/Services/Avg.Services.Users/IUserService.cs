@@ -11,9 +11,9 @@
 
     public interface IUserService
     {
-        Task<AvgUser> AddAsync(AvgUser user, string password);
+        Task<AvgUser> AddAsync(AvgUser user, string password, string role = null);
 
-        Task<AvgUser> AddAsync(string email, string firstName, string lastName, string password, byte[] avatar);
+        Task<AvgUser> AddAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null);
 
         Task AddExternalLoginInfoAsync(AvgUser user, ExternalLoginInfo info);
 
@@ -34,5 +34,9 @@
         bool RemoveRoles(string[] roles);
 
         IQueryable<string> GetAllRoles();
+
+        IQueryable<AvgUser> GetAllUsersinRole(string role);
+
+        Task AddUserInRole(AvgUser user, string role);
     }
 }
