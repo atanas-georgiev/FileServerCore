@@ -8,7 +8,7 @@
 
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-    public class AvgUser : IdentityUser, IHavePrimaryKey<string>, IAuditInfo, IDeletableEntity
+    public class AvgIdentityUser : IdentityUser, IHavePrimaryKey<string>, IAuditInfo, IDeletableEntity
     {
         public byte[] Avatar { get; set; }
 

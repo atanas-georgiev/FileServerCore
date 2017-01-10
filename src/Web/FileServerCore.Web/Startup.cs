@@ -3,34 +3,28 @@
     using System;
     using System.Globalization;
     using System.Linq;
-    using System.Reflection;
 
     using AutoMapper;
 
     using Avg.Data;
     using Avg.Data.Common;
-    using Avg.Data.Models;
-    using Avg.Services.Users;
-
-    using FileServerCore.Web.Areas.Admin.Models;
     using FileServerCore.Web.Infrastructure.Middlewares;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.AspNetCore.Localization;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.DependencyModel;
     using Microsoft.Extensions.Logging;
     using Microsoft.Net.Http.Headers;
 
     using Newtonsoft.Json.Serialization;
-
-    using StructureMap;
     using FileServerCore.Web.Infrastructure.Helpers;
+    using Avg.Data.Models;
+    using AvgIdentity.Extensions;
+    using AvgIdentity.Managers;
 
     public class Startup
     {
@@ -58,7 +52,7 @@
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
             IServiceScopeFactory scopeFactory,
-            IUserService userService,
+            IUserRoleManager<AvgIdentityUser> userService,
             IServiceProvider provider)
         {
             var supportedCultures =
@@ -103,19 +97,19 @@
 
             app.UseIdentity();
 
-            app.UseFacebookAuthentication(
-                new FacebookOptions()
-                    {
-                        AppId = this.Configuration["Security:ExternalProviders:Facebook:Id"],
-                        AppSecret = this.Configuration["Security:ExternalProviders:Facebook:Secret"]
-                    });
+            //app.UseFacebookAuthentication(
+            //    new FacebookOptions()
+            //        {
+            //            AppId = this.Configuration["Security:ExternalProviders:Facebook:Id"],
+            //            AppSecret = this.Configuration["Security:ExternalProviders:Facebook:Secret"]
+            //        });
 
-            app.UseGoogleAuthentication(
-                new GoogleOptions()
-                    {
-                        ClientId = this.Configuration["Security:ExternalProviders:Google:Id"],
-                        ClientSecret = this.Configuration["Security:ExternalProviders:Google:Secret"]
-                    });
+            //app.UseGoogleAuthentication(
+            //    new GoogleOptions()
+            //        {
+            //            ClientId = this.Configuration["Security:ExternalProviders:Google:Id"],
+            //            ClientSecret = this.Configuration["Security:ExternalProviders:Google:Secret"]
+            //        });
 
             app.UseSession();
 
@@ -142,17 +136,7 @@
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<,>), typeof(Repository<,>)));
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<>), typeof(Repository<>)));
 
-            services.AddScoped<IUserService, UserService>();
-
-            services.AddIdentity<AvgUser, IdentityRole>(
-                o =>
-                    {
-                        o.Password.RequireDigit = false;
-                        o.Password.RequireLowercase = false;
-                        o.Password.RequireUppercase = false;
-                        o.Password.RequireNonAlphanumeric = false;
-                        o.Password.RequiredLength = 6;
-                    }).AddEntityFrameworkStores<AvgDbContext>().AddDefaultTokenProviders();
+            services.AddAvgServices<AvgDbContext, AvgIdentityUser>(Configuration);
 
             services.AddDistributedMemoryCache();
             services.AddSession();

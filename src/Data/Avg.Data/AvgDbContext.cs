@@ -8,7 +8,7 @@
     using Avg.Data.Common.Models;
     using Avg.Data.Models;
 
-    public class AvgDbContext : IdentityDbContext<AvgUser>
+    public class AvgDbContext : IdentityDbContext<AvgIdentityUser>
     {
         public AvgDbContext(DbContextOptions options)
             : base(options)

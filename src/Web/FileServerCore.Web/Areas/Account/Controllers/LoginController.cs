@@ -5,8 +5,7 @@
     using System.Security.Claims;
     using System.Threading.Tasks;
 
-    using Avg.Data.Models;
-    using Avg.Services.Users;
+    using Avg.Data.Models;    
 
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
@@ -16,15 +15,16 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
+    using AvgIdentity.Managers;
 
     [Area("Account")]
     public class LoginController : BaseController
     {
-        private readonly SignInManager<AvgUser> signInManager;
+        private readonly SignInManager<AvgIdentityUser> signInManager;
 
         public LoginController(
-            SignInManager<AvgUser> signInManager,
-            IUserService userService,
+            SignInManager<AvgIdentityUser> signInManager,
+            IUserRoleManager<AvgIdentityUser> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)
@@ -113,7 +113,7 @@
                 }
 
                 //// TODO: avatar
-                var user = await this.UserService.AddAsync(
+                var user = await this.UserRoleManager.AddUserAsync(
                                model.Email,
                                model.FirstName,
                                model.LastName,
@@ -123,7 +123,7 @@
                 if (user != null)
                 {
                     //// TODO: Add to role
-                    await this.UserService.AddExternalLoginInfoAsync(user, info);
+                    await this.UserRoleManager.AddUserExternalLoginInfoAsync(user, info);
                     await this.signInManager.SignInAsync(user, false);
                     return this.RedirectToLocal(returnUrl);
                 }

@@ -7,20 +7,19 @@ namespace FileServerCore.Web.Areas.Account.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
-    using Avg.Data;
-    using Avg.Data.Models;
-    using Avg.Services.Users;
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Resources;
     using Microsoft.Extensions.Localization;
+    using AvgIdentity.Managers;
+    using Avg.Data.Models;
 
     [Authorize]
     [Area("Account")]
     public class ManageController : BaseController
     {
-        public ManageController(IUserService userService, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages)
-            : base(userService, localizedLabels, localizedErrorMessages)
+        public ManageController(IUserRoleManager<AvgIdentityUser> userRoleManager, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages)
+            : base(userRoleManager, localizedLabels, localizedErrorMessages)
         {
         }
 
@@ -39,7 +38,7 @@ namespace FileServerCore.Web.Areas.Account.Controllers
         [HttpPost]
         public IActionResult Index(AccountManageViewModel model)
         {
-            var user = this.UserService.GetAll().FirstOrDefault(x => x.UserName == model.Email);
+            var user = this.UserRoleManager.GetAllUsers().FirstOrDefault(x => x.UserName == model.Email);
 
             if (user != null && user.UserName != this.UserProfile.UserName)
             {
@@ -52,7 +51,7 @@ namespace FileServerCore.Web.Areas.Account.Controllers
                 this.UserProfile.FirstName = model.FirstName;
                 this.UserProfile.LastName = model.LastName;
 
-                // this.UserService.Update(this.UserProfile);
+                // this.UserRoleManager.Update(this.UserProfile);
                 return this.RedirectToAction("Index", "Home", new { area = string.Empty });
             }
 

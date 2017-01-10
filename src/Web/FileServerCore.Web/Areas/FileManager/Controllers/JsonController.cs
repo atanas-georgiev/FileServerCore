@@ -3,8 +3,6 @@
     using System.Collections.Generic;
     using System.IO;
 
-    using Avg.Services.Users;
-
     using FileServerCore.Web.Areas.FileManager.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Resources;
@@ -12,6 +10,8 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
+    using AvgIdentity.Managers;
+    using Avg.Data.Models;
 
     // [Authorize(Roles = "Admin")]
     [Area("FileManager")]
@@ -23,7 +23,7 @@
 
         public JsonController(
             IHostingEnvironment env,
-            IUserService userService,
+            IUserRoleManager<AvgIdentityUser> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)

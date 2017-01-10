@@ -4,9 +4,7 @@
 
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
-
-    using Avg.Services.Users;
-
+    
     using FileServerCore.Web.Areas.Admin.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Infrastructure.Middlewares;
@@ -18,13 +16,15 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using System.Threading.Tasks;
+    using AvgIdentity.Managers;
+    using Avg.Data.Models;
 
     // [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class JsonController : BaseController
     {
         public JsonController(
-            IUserService userService,
+            IUserRoleManager<AvgIdentityUser> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)
@@ -36,7 +36,7 @@
         {
             if (role != null && this.ModelState.IsValid)
             {
-                this.UserService.AddRoles(new[] { role.Name });
+                this.UserRoleManager.AddRoles(new[] { role.Name });
             }
 
             return this.Json(new[] { role }.ToDataSourceResult(request, this.ModelState));
@@ -47,7 +47,7 @@
         {
             if (role != null)
             {
-                var result = this.UserService.RemoveRoles(new[] { role.Name });
+                var result = this.UserRoleManager.RemoveRoles(new[] { role.Name });
 
                 if (result == false)
                 {
@@ -60,7 +60,7 @@
 
         public ActionResult RolesRead([DataSourceRequest] DataSourceRequest request)
         {            
-            return this.Json(this.UserService.GetAllRoles().ProjectTo<RolesViewModel>().ToDataSourceResult(request));
+            return this.Json(this.UserRoleManager.GetAllRoles().ProjectTo<RolesViewModel>().ToDataSourceResult(request));
         }
     }
 }

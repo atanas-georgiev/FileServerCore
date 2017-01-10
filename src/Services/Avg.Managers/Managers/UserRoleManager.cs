@@ -1,4 +1,4 @@
-﻿namespace Avg.Services.Users
+﻿namespace AvgIdentity.Managers
 {
     using System;
     using System.Collections.Generic;
@@ -11,21 +11,21 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-    public class UserService : IUserService
+    public class UserRoleManager : IUserRoleManager<AvgIdentityUser>
     {
         private const string InitialPassword = "changeme";
 
-        private readonly UserManager<AvgUser> userManager;
+        private readonly UserManager<AvgIdentityUser> userManager;
 
         private readonly AvgDbContext context;
 
-        public UserService(UserManager<AvgUser> userManager, AvgDbContext context)
+        public UserRoleManager(UserManager<AvgIdentityUser> userManager, AvgDbContext context)
         {
             this.userManager = userManager;
             this.context = context;
         }
 
-        public async Task<AvgUser> AddAsync(AvgUser user, string password, string role = null)
+        public virtual async Task<AvgIdentityUser> AddUserAsync(AvgIdentityUser user, string password, string role = null)
         {
             if (user != null)
             {
@@ -47,55 +47,55 @@
             return null;
         }
 
-        public async Task<AvgUser> AddAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null)
+        public async Task<AvgIdentityUser> AddUserAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null)
         {
-            var user = new AvgUser { Email = email, FirstName = firstName, LastName = lastName, Avatar = avatar };
+            var user = new AvgIdentityUser { Email = email, FirstName = firstName, LastName = lastName, Avatar = avatar };
 
-            return await this.AddAsync(user, password, role);
+            return await this.AddUserAsync(user, password, role);
         }
 
-        public async Task DeleteAsync(AvgUser user)
+        public async Task DeleteUserAsync(AvgIdentityUser user)
         {
             await this.userManager.DeleteAsync(user);
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteUserAsync(string id)
         {
-            await this.userManager.DeleteAsync(this.GetById(id));
+            await this.userManager.DeleteAsync(this.GetUserById(id));
         }
 
-        public IQueryable<AvgUser> GetAll()
+        public IQueryable<AvgIdentityUser> GetAllUsers()
         {
             return this.userManager.Users;
         }
 
-        public AvgUser GetByEmail(string email)
+        public AvgIdentityUser GetUserByEmail(string email)
         {
             return this.userManager.Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public AvgUser GetById(string id)
+        public AvgIdentityUser GetUserById(string id)
         {
             return this.userManager.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public async Task UpdateAsync(AvgUser user)
+        public async Task UpdateUserAsync(AvgIdentityUser user)
         {
             await this.userManager.UpdateAsync(user);
         }
 
-        public void AddRoles(string[] roles)
+        public void AddRoles(IEnumerable<string> roles)
         {
             this.context.Roles.AddRange(roles.Select(r => new IdentityRole(r)));
             this.context.SaveChanges();
         }
 
-        public async Task AddExternalLoginInfoAsync(AvgUser user, ExternalLoginInfo info)
+        public async Task AddUserExternalLoginInfoAsync(AvgIdentityUser user, ExternalLoginInfo info)
         {
             await this.userManager.AddLoginAsync(user, info);
         }
 
-        public bool RemoveRoles(string[] roles)
+        public bool RemoveRoles(IEnumerable<string> roles)
         {
             if (roles.All(role => this.GetAllUsersinRole(role).Count() <= 0))
             {
@@ -114,7 +114,7 @@
             return this.context.Roles.Select(r => r.Name);
         }
 
-        public IQueryable<AvgUser> GetAllUsersinRole(string role)
+        public IQueryable<AvgIdentityUser> GetAllUsersinRole(string role)
         {
             var roleDb = this.context.Roles.FirstOrDefault(x => x.Name == role);
 
@@ -123,13 +123,10 @@
                 return this.context.Users.Where(x => x.Roles.Any(r => r.RoleId == roleDb.Id));
             }
 
-            return new List<AvgUser>().AsQueryable();
-
-            var a = this.userManager.GetUsersInRoleAsync(role).Result;
-            return this.userManager.GetUsersInRoleAsync(role).Result.AsQueryable();
+            return new List<AvgIdentityUser>().AsQueryable();                       
         }
 
-        public async Task AddUserInRole(AvgUser user, string role)
+        public async Task AddUserInRole(AvgIdentityUser user, string role)
         {
             if (!(await userManager.IsInRoleAsync(user, role)))
             {

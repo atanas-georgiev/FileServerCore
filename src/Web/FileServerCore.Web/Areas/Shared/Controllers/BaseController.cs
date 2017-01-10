@@ -3,13 +3,13 @@
     using System.Linq;
 
     using Avg.Data.Models;
-    using Avg.Services.Users;
 
     using FileServerCore.Web.Resources;
 
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Localization;
+    using AvgIdentity.Managers;
 
     public class BaseController : Controller
     {
@@ -18,23 +18,23 @@
         protected readonly IStringLocalizer<Labels> LocalizedLabels;
 
         public BaseController(
-            IUserService userService,
+            IUserRoleManager<AvgIdentityUser> userRoleManager,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
         {
-            this.UserService = userService;
+            this.UserRoleManager = userRoleManager;
             this.LocalizedLabels = localizedLabels;
             this.LocalizedErrorMessages = localizedErrorMessages;
         }
 
-        protected AvgUser UserProfile { get; private set; }
+        protected AvgIdentityUser UserProfile { get; private set; }
 
-        protected IUserService UserService { get; set; }
+        protected IUserRoleManager<AvgIdentityUser> UserRoleManager { get; set; }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             this.UserProfile =
-                this.UserService.GetAll().FirstOrDefault(u => u.UserName == context.HttpContext.User.Identity.Name);
+                this.UserRoleManager.GetAllUsers().FirstOrDefault(u => u.UserName == context.HttpContext.User.Identity.Name);
             base.OnActionExecuting(context);
         }
 

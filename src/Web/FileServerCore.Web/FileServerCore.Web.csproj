@@ -134,8 +134,7 @@
     <ProjectReference Include="..\..\Data\Avg.Data.Common\Avg.Data.Common.csproj" />
     <ProjectReference Include="..\..\Data\Avg.Data.Models\Avg.Data.Models.csproj" />
     <ProjectReference Include="..\..\Data\Avg.Data\Avg.Data.csproj" />
-    <ProjectReference Include="..\..\Services\Avg.Services.Mappings\Avg.Services.Mappings.csproj" />
-    <ProjectReference Include="..\..\Services\Avg.Services.Users\Avg.Services.Users.csproj" />
+    <ProjectReference Include="..\..\Services\Avg.Managers\AvgIdentity.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

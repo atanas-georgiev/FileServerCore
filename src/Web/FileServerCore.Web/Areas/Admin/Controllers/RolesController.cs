@@ -1,7 +1,7 @@
 ﻿namespace FileServerCore.Web.Areas.Admin.Controllers
 {
-    using Avg.Services.Users;
-
+    using Avg.Data.Models;
+    using AvgIdentity.Managers;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Resources;
 
@@ -13,7 +13,7 @@
     public class RolesController : BaseController
     {
         public RolesController(
-            IUserService userService,
+            IUserRoleManager<AvgIdentityUser> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)

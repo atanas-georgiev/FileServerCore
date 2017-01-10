@@ -4,7 +4,6 @@
     using System.Threading.Tasks;
 
     using Avg.Data.Models;
-    using Avg.Services.Users;
 
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
@@ -14,17 +13,18 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
+    using AvgIdentity.Managers;
 
     [Area("Account")]
     public class RegisterController : BaseController
     {
-        private readonly SignInManager<AvgUser> signInManager;
+        private readonly SignInManager<AvgIdentityUser> signInManager;
 
         public RegisterController(
-            IUserService userService,
+            IUserRoleManager<AvgIdentityUser> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages,
-            SignInManager<AvgUser> signInManager)
+            SignInManager<AvgIdentityUser> signInManager)
             : base(userService, localizedLabels, localizedErrorMessages)
         {
             this.signInManager = signInManager;
@@ -43,7 +43,7 @@
             if (this.ModelState.IsValid)
             {
                 //// TODO: avatar
-                var user = await this.UserService.AddAsync(
+                var user = await this.UserRoleManager.AddUserAsync(
                                model.Email,
                                model.FirstName,
                                model.LastName,
