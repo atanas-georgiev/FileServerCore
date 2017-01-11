@@ -11,21 +11,23 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-    public class UserRoleManager : IUserRoleManager<AvgIdentityUser>
+    public class UserRoleManager<TUser, TContext> : IUserRoleManager<TUser, TContext>
+        where TUser : AvgIdentityUser, new()
+        where TContext : IdentityDbContext<TUser>
     {
         private const string InitialPassword = "changeme";
 
-        private readonly UserManager<AvgIdentityUser> userManager;
+        private readonly UserManager<TUser> userManager;
 
-        private readonly AvgDbContext context;
+        private readonly TContext context;
 
-        public UserRoleManager(UserManager<AvgIdentityUser> userManager, AvgDbContext context)
+        public UserRoleManager(UserManager<TUser> userManager, TContext context)
         {
             this.userManager = userManager;
             this.context = context;
         }
 
-        public virtual async Task<AvgIdentityUser> AddUserAsync(AvgIdentityUser user, string password, string role = null)
+        public virtual async Task<TUser> AddUserAsync(TUser user, string password, string role = null)
         {
             if (user != null)
             {
@@ -47,14 +49,13 @@
             return null;
         }
 
-        public async Task<AvgIdentityUser> AddUserAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null)
+        public async Task<TUser> AddUserAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null)
         {
-            var user = new AvgIdentityUser { Email = email, FirstName = firstName, LastName = lastName, Avatar = avatar };
-
+            var user = new TUser { Email = email, FirstName = firstName, LastName = lastName, Avatar = avatar };
             return await this.AddUserAsync(user, password, role);
         }
 
-        public async Task DeleteUserAsync(AvgIdentityUser user)
+        public async Task DeleteUserAsync(TUser user)
         {
             await this.userManager.DeleteAsync(user);
         }
@@ -64,22 +65,22 @@
             await this.userManager.DeleteAsync(this.GetUserById(id));
         }
 
-        public IQueryable<AvgIdentityUser> GetAllUsers()
+        public IQueryable<TUser> GetAllUsers()
         {
             return this.userManager.Users;
         }
 
-        public AvgIdentityUser GetUserByEmail(string email)
+        public TUser GetUserByEmail(string email)
         {
             return this.userManager.Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public AvgIdentityUser GetUserById(string id)
+        public TUser GetUserById(string id)
         {
             return this.userManager.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public async Task UpdateUserAsync(AvgIdentityUser user)
+        public async Task UpdateUserAsync(TUser user)
         {
             await this.userManager.UpdateAsync(user);
         }
@@ -90,7 +91,7 @@
             this.context.SaveChanges();
         }
 
-        public async Task AddUserExternalLoginInfoAsync(AvgIdentityUser user, ExternalLoginInfo info)
+        public async Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info)
         {
             await this.userManager.AddLoginAsync(user, info);
         }
@@ -111,10 +112,11 @@
 
         public IQueryable<string> GetAllRoles()
         {
+            var a = this.context.Roles.Select(r => r.Name);
             return this.context.Roles.Select(r => r.Name);
         }
 
-        public IQueryable<AvgIdentityUser> GetAllUsersinRole(string role)
+        public IQueryable<TUser> GetAllUsersinRole(string role)
         {
             var roleDb = this.context.Roles.FirstOrDefault(x => x.Name == role);
 
@@ -123,10 +125,10 @@
                 return this.context.Users.Where(x => x.Roles.Any(r => r.RoleId == roleDb.Id));
             }
 
-            return new List<AvgIdentityUser>().AsQueryable();                       
+            return new List<TUser>().AsQueryable();                       
         }
 
-        public async Task AddUserInRole(AvgIdentityUser user, string role)
+        public async Task AddUserInRole(TUser user, string role)
         {
             if (!(await userManager.IsInRoleAsync(user, role)))
             {

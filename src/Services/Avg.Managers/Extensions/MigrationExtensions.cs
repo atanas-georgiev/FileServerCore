@@ -11,24 +11,26 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
+    using System.Threading.Tasks;
 
     public static class MigrationExtensions
     {
-        public static void AddAvgIdentityMigration<TContext, TUser>(this IApplicationBuilder app, IServiceScopeFactory scopeFactory, IConfiguration configuration)
-                where TUser : AvgIdentityUser
+        public static async Task AddAvgIdentityMigration<TContext, TUser>(this IApplicationBuilder app, IServiceScopeFactory scopeFactory, IConfiguration configuration)
+                where TUser : AvgIdentityUser, new()
                 where TContext : IdentityDbContext<TUser>
         {
             using (var serviceScope = scopeFactory.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<TContext>();
-                var userRoleManager = serviceScope.ServiceProvider.GetService<IUserRoleManager<TUser>>();
+                var userRoleManager = serviceScope.ServiceProvider.GetService<IUserRoleManager<TUser, TContext>>();
                 
                 try
                 {
                     if (!context.Roles.Any())
                     {
                         SeedRoles(userRoleManager, configuration);
-                        SeedUsers(userRoleManager, configuration);
+                        await SeedUsers(userRoleManager, configuration);
                     }
                 }
                 catch
@@ -38,13 +40,49 @@
                     if (!context.Roles.Any())
                     {
                         SeedRoles(userRoleManager, configuration);
-                        SeedUsers(userRoleManager, configuration);
+                        await SeedUsers(userRoleManager, configuration);
                     }
                 }
             }
         }
 
-        private static void SeedUsers<TUser>(IUserRoleManager<TUser> userRoleManager, IConfiguration configuration) where TUser : AvgIdentityUser
+        private static async Task SeedUsers<TUser, TContext>(IUserRoleManager<TUser, TContext> userRoleManager, IConfiguration configuration)
+            where TUser : AvgIdentityUser, new()
+            where TContext : IdentityDbContext<TUser>
+        {
+            try
+            {
+                // TODO: add reflection
+                var userref = typeof(TUser).GetTypeInfo().GetProperties();
+
+                var users = configuration
+                    .GetSection("AvgIdentity")
+                    .GetSection("InitialData")
+                    .GetSection("Users")
+                    .GetChildren()
+                    .Select(c => new
+                    {
+                        FirstName = c.GetSection("FirstName").Value,
+                        LastName = c.GetSection("LastName").Value,
+                        Email = c.GetSection("Email").Value,
+                        Password = c.GetSection("Password").Value,
+                        Role = c.GetSection("Role").Value
+                    });
+
+                foreach (var user in users)
+                {
+                    await userRoleManager.AddUserAsync(user.Email, user.FirstName, user.LastName, user.Password, null, user.Role);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new AvgIdentityConfigurationException("AvgIdentity InitialData error");
+            }            
+        }
+
+        private static void SeedRoles<TUser, TContext>(IUserRoleManager<TUser, TContext> userRoleManager, IConfiguration configuration)
+            where TUser : AvgIdentityUser, new()
+            where TContext : IdentityDbContext<TUser>
         {
             var roles = new List<string>();
 
@@ -53,9 +91,9 @@
                 roles = configuration
                     .GetSection("AvgIdentity")
                     .GetSection("InitialData")
-                    .GetSection("Users")
+                    .GetSection("Roles")
                     .GetChildren()
-                    .Select(c => c.Value).ToList();                
+                    .Select(c => c.Value).ToList();
             }
             catch
             {
@@ -63,11 +101,6 @@
             }
 
             userRoleManager.AddRoles(roles);
-        }
-
-        private static void SeedRoles<TUser>(IUserRoleManager<TUser> userRoleManager, IConfiguration configuration) where TUser : AvgIdentityUser
-        {
-            throw new NotImplementedException();
         }
     }
 }

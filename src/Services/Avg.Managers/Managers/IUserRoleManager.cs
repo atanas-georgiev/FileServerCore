@@ -6,9 +6,11 @@
     using Microsoft.AspNetCore.Identity;
     using Avg.Data.Models;
     using System.Collections.Generic;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-    public interface IUserRoleManager<TUser>
-        where TUser : AvgIdentityUser
+    public interface IUserRoleManager<TUser, TContext>
+        where TUser : AvgIdentityUser, new()
+        where TContext : IdentityDbContext<TUser>
     {
 
         #region Users

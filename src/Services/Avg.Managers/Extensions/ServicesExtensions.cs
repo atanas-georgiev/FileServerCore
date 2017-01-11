@@ -10,7 +10,7 @@
 
     public static class ServicesExtensions
     {
-        public static void AddAvgServices<TContext, TUser>(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAvgIdentityServices<TContext, TUser>(this IServiceCollection services, IConfiguration configuration)
             where TUser : AvgIdentityUser
             where TContext : IdentityDbContext<TUser>
         {
@@ -32,8 +32,6 @@
                 throw new AvgIdentityConfigurationException("AvgIdentity PasswordConfig error");
             }
             
-            services.AddScoped<IUserRoleManager<AvgIdentityUser>, UserRoleManager>();
-
             services.AddIdentity<TUser, IdentityRole>(o => o.Password = passwordOptions)
                 .AddEntityFrameworkStores<TContext>()
                 .AddDefaultTokenProviders();

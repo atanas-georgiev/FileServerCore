@@ -38,8 +38,5 @@
     <ProjectReference Include="..\Avg.Data.Common\Avg.Data.Common.csproj" />
     <ProjectReference Include="..\Avg.Data.Models\Avg.Data.Models.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

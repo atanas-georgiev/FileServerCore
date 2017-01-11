@@ -16,6 +16,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using AvgIdentity.Managers;
+    using Avg.Data;
 
     [Area("Account")]
     public class LoginController : BaseController
@@ -24,7 +25,7 @@
 
         public LoginController(
             SignInManager<AvgIdentityUser> signInManager,
-            IUserRoleManager<AvgIdentityUser> userService,
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)

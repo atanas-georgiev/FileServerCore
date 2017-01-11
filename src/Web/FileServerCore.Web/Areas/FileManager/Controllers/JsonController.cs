@@ -12,6 +12,7 @@
     using Microsoft.Extensions.Localization;
     using AvgIdentity.Managers;
     using Avg.Data.Models;
+    using Avg.Data;
 
     // [Authorize(Roles = "Admin")]
     [Area("FileManager")]
@@ -23,7 +24,7 @@
 
         public JsonController(
             IHostingEnvironment env,
-            IUserRoleManager<AvgIdentityUser> userService,
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)

@@ -13,13 +13,13 @@ namespace FileServerCore.Web.Areas.Account.Controllers
     using Microsoft.Extensions.Localization;
     using AvgIdentity.Managers;
     using Avg.Data.Models;
+    using Avg.Data;
 
     [Authorize]
     [Area("Account")]
     public class ManageController : BaseController
     {
-        public ManageController(IUserRoleManager<AvgIdentityUser> userRoleManager, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages)
-            : base(userRoleManager, localizedLabels, localizedErrorMessages)
+        public ManageController(IUserRoleManager<AvgIdentityUser, AvgDbContext> userRoleManager, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages) : base(userRoleManager, localizedLabels, localizedErrorMessages)
         {
         }
 

@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
     using AvgIdentity.Managers;
+    using Avg.Data;
 
     [Area("Account")]
     public class RegisterController : BaseController
@@ -21,7 +22,7 @@
         private readonly SignInManager<AvgIdentityUser> signInManager;
 
         public RegisterController(
-            IUserRoleManager<AvgIdentityUser> userService,
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages,
             SignInManager<AvgIdentityUser> signInManager)

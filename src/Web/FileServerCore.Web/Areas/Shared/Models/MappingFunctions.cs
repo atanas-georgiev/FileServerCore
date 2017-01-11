@@ -1,5 +1,6 @@
 ﻿namespace FileServerCore.Web.Areas.Shared.Models
 {
+    using Avg.Data;
     using Avg.Data.Models;
     using AvgIdentity.Managers;
     using FileServerCore.Web.Infrastructure.Helpers;
@@ -9,7 +10,7 @@
     {
         public static int GetUsersCountInRole(string role)
         {            
-            var userService = (UserRoleManager)ServicesHelper.ServiceProvider.GetService(typeof(IUserRoleManager<AvgIdentityUser>));
+            var userService = (UserRoleManager<AvgIdentityUser, AvgDbContext>)ServicesHelper.ServiceProvider.GetService(typeof(IUserRoleManager<AvgIdentityUser, AvgDbContext>));
             return userService.GetAllUsersinRole(role).Count();
         }
     }

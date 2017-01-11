@@ -6,8 +6,7 @@
     using AutoMapper.QueryableExtensions;
     
     using FileServerCore.Web.Areas.Admin.Models;
-    using FileServerCore.Web.Areas.Shared.Controllers;
-    using FileServerCore.Web.Infrastructure.Middlewares;
+    using FileServerCore.Web.Areas.Shared.Controllers;    
     using FileServerCore.Web.Resources;
 
     using Kendo.Mvc.Extensions;
@@ -18,13 +17,14 @@
     using System.Threading.Tasks;
     using AvgIdentity.Managers;
     using Avg.Data.Models;
+    using Avg.Data;
 
     // [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class JsonController : BaseController
     {
         public JsonController(
-            IUserRoleManager<AvgIdentityUser> userService,
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userService,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
             : base(userService, localizedLabels, localizedErrorMessages)

@@ -8,7 +8,7 @@ using Avg.Data;
 namespace Avg.Data.Migrations
 {
     [DbContext(typeof(AvgDbContext))]
-    [Migration("20170102180711_last")]
+    [Migration("20170111084559_last")]
     partial class last
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,7 +17,7 @@ namespace Avg.Data.Migrations
                 .HasAnnotation("ProductVersion", "1.1.0-rtm-22752")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Avg.Data.Models.AvgUser", b =>
+            modelBuilder.Entity("Avg.Data.Models.AvgIdentityUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -202,7 +202,7 @@ namespace Avg.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Avg.Data.Models.AvgUser")
+                    b.HasOne("Avg.Data.Models.AvgIdentityUser")
                         .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -210,7 +210,7 @@ namespace Avg.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Avg.Data.Models.AvgUser")
+                    b.HasOne("Avg.Data.Models.AvgIdentityUser")
                         .WithMany("Logins")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -223,7 +223,7 @@ namespace Avg.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("Avg.Data.Models.AvgUser")
+                    b.HasOne("Avg.Data.Models.AvgIdentityUser")
                         .WithMany("Roles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

@@ -10,6 +10,7 @@
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Localization;
     using AvgIdentity.Managers;
+    using Avg.Data;
 
     public class BaseController : Controller
     {
@@ -18,7 +19,7 @@
         protected readonly IStringLocalizer<Labels> LocalizedLabels;
 
         public BaseController(
-            IUserRoleManager<AvgIdentityUser> userRoleManager,
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userRoleManager,
             IStringLocalizer<Labels> localizedLabels,
             IStringLocalizer<ErrorMessages> localizedErrorMessages)
         {
@@ -29,7 +30,7 @@
 
         protected AvgIdentityUser UserProfile { get; private set; }
 
-        protected IUserRoleManager<AvgIdentityUser> UserRoleManager { get; set; }
+        protected IUserRoleManager<AvgIdentityUser, AvgDbContext> UserRoleManager { get; set; }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

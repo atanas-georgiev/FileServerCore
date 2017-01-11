@@ -8,7 +8,6 @@
 
     using Avg.Data;
     using Avg.Data.Common;
-    using FileServerCore.Web.Infrastructure.Middlewares;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -24,7 +23,7 @@
     using FileServerCore.Web.Infrastructure.Helpers;
     using Avg.Data.Models;
     using AvgIdentity.Extensions;
-    using AvgIdentity.Managers;
+    using AvgIdentity.Managers;    
 
     public class Startup
     {
@@ -52,7 +51,7 @@
             IHostingEnvironment env,
             ILoggerFactory loggerFactory,
             IServiceScopeFactory scopeFactory,
-            IUserRoleManager<AvgIdentityUser> userService,
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userService,
             IServiceProvider provider)
         {
             var supportedCultures =
@@ -113,7 +112,7 @@
 
             app.UseSession();
 
-            app.AddAutomaticMigration(userService, scopeFactory, this.Configuration);
+            app.AddAvgIdentityMigration<AvgDbContext, AvgIdentityUser>(scopeFactory, Configuration);
 
             app.UseMvc(
                 routes =>
@@ -131,12 +130,15 @@
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<AvgDbContext>(
-                options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));
+                options => options.UseSqlServer(this.Configuration.GetConnectionString("FileServerCoreDb")));            
             services.AddScoped<DbContext, AvgDbContext>();
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<,>), typeof(Repository<,>)));
             services.Add(ServiceDescriptor.Scoped(typeof(IRepository<>), typeof(Repository<>)));
+            services.Add(ServiceDescriptor.Scoped(typeof(IUserRoleManager<,>), typeof(UserRoleManager<,>)));
 
-            services.AddAvgServices<AvgDbContext, AvgIdentityUser>(Configuration);
+            //services.Add(ServiceDescriptor.Scoped(typeof(IdentityDbContext<>), typeof(AvgDbContext<>)));
+            
+            services.AddAvgIdentityServices<AvgDbContext, AvgIdentityUser>(Configuration);
 
             services.AddDistributedMemoryCache();
             services.AddSession();
@@ -153,6 +155,11 @@
             ServicesHelper.Initialize(services);
 
             services.AddAutoMapper();
+        }
+
+        private int IdentityDbContext<T>()
+        {
+            throw new NotImplementedException();
         }
     }
 }
