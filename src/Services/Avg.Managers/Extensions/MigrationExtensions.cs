@@ -71,7 +71,7 @@
 
                 foreach (var user in users)
                 {
-                    await userRoleManager.AddUserAsync(user.Email, user.FirstName, user.LastName, user.Password, null, user.Role);
+                    await userRoleManager.AddUserAsync(user.Email, user.Password, user.FirstName, user.LastName, user.Role);
                 }
             }
             catch (Exception ex)

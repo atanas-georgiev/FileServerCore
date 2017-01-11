@@ -1,30 +1,35 @@
 namespace FileServerCore.Web.Areas.Account.Controllers
 {
-    // using Kendo.Mvc.Extensions;
     using System.Linq;
+    using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
+    using Avg.Data;
+    using Avg.Data.Models;
+
+    using AvgIdentity.Managers;
 
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
     using FileServerCore.Web.Resources;
+
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
-    using AvgIdentity.Managers;
-    using Avg.Data.Models;
-    using Avg.Data;
 
     [Authorize]
     [Area("Account")]
     public class ManageController : BaseController
     {
-        public ManageController(IUserRoleManager<AvgIdentityUser, AvgDbContext> userRoleManager, IStringLocalizer<Labels> localizedLabels, IStringLocalizer<ErrorMessages> localizedErrorMessages) : base(userRoleManager, localizedLabels, localizedErrorMessages)
+        public ManageController(
+            IUserRoleManager<AvgIdentityUser, AvgDbContext> userRoleManager,
+            IStringLocalizer<Labels> localizedLabels,
+            IStringLocalizer<ErrorMessages> localizedErrorMessages)
+            : base(userRoleManager, localizedLabels, localizedErrorMessages)
         {
         }
 
         public IActionResult Index()
-        {
+        { 
             var model = new AccountManageViewModel()
                             {
                                 Email = this.UserProfile.Email,
@@ -36,13 +41,13 @@ namespace FileServerCore.Web.Areas.Account.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(AccountManageViewModel model)
+        public async Task<IActionResult> Index(AccountManageViewModel model)
         {
-            var user = this.UserRoleManager.GetAllUsers().FirstOrDefault(x => x.UserName == model.Email);
+            var user = this.UserRoleManager.GetUser(model.Email);
 
-            if (user != null && user.UserName != this.UserProfile.UserName)
+            if (user != null && user.Email != this.UserProfile.Email)
             {
-                this.ModelState.AddModelError("Email", LocalizedErrorMessages["UsernameExist"]);
+                this.ModelState.AddModelError("Email", this.LocalizedErrorMessages["UsernameExist"]);
             }
             else if (this.ModelState.IsValid)
             {
@@ -51,7 +56,7 @@ namespace FileServerCore.Web.Areas.Account.Controllers
                 this.UserProfile.FirstName = model.FirstName;
                 this.UserProfile.LastName = model.LastName;
 
-                // this.UserRoleManager.Update(this.UserProfile);
+                await this.UserRoleManager.UpdateUserAsync(this.UserProfile);
                 return this.RedirectToAction("Index", "Home", new { area = string.Empty });
             }
 

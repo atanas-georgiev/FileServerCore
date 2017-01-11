@@ -8,6 +8,12 @@
 
     using Avg.Data;
     using Avg.Data.Common;
+    using Avg.Data.Models;
+
+    using AvgIdentity.Extensions;
+    using AvgIdentity.Managers;
+
+    using FileServerCore.Web.Infrastructure.Helpers;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -20,10 +26,6 @@
     using Microsoft.Net.Http.Headers;
 
     using Newtonsoft.Json.Serialization;
-    using FileServerCore.Web.Infrastructure.Helpers;
-    using Avg.Data.Models;
-    using AvgIdentity.Extensions;
-    using AvgIdentity.Managers;    
 
     public class Startup
     {
@@ -138,7 +140,7 @@
 
             //services.Add(ServiceDescriptor.Scoped(typeof(IdentityDbContext<>), typeof(AvgDbContext<>)));
             
-            services.AddAvgIdentityServices<AvgDbContext, AvgIdentityUser>(Configuration);
+            services.AddAvgIdentityServices<AvgDbContext, AvgIdentityUser>(this.Configuration);
 
             services.AddDistributedMemoryCache();
             services.AddSession();

@@ -3,37 +3,49 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Threading.Tasks;
-
-    using Avg.Data;
     using Avg.Data.Models;
 
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
+    using Remotion.Linq.Utilities;
+
     public class UserRoleManager<TUser, TContext> : IUserRoleManager<TUser, TContext>
         where TUser : AvgIdentityUser, new()
         where TContext : IdentityDbContext<TUser>
     {
-        private const string InitialPassword = "changeme";
+        protected const string InitialPassword = "changeme";
 
-        private readonly UserManager<TUser> userManager;
+        protected UserManager<TUser> UserManager { get; set; }
 
-        private readonly TContext context;
+        protected SignInManager<TUser> SignInManager { get; set; }
 
-        public UserRoleManager(UserManager<TUser> userManager, TContext context)
+        protected TContext Context { get; set; }
+
+        public UserRoleManager(UserManager<TUser> userManager, SignInManager<TUser> signInManager, TContext context)
         {
-            this.userManager = userManager;
-            this.context = context;
+            this.UserManager = userManager;
+            this.SignInManager = signInManager;
+            this.Context = context;
         }
 
+
+
+        #region Users
         public virtual async Task<TUser> AddUserAsync(TUser user, string password, string role = null)
         {
             if (user != null)
             {
-                user.CreatedOn = DateTime.Now;
+                user.CreatedOn = DateTime.UtcNow;
                 user.UserName = user.Email;
-                var result = await this.userManager.CreateAsync(user, password ?? InitialPassword);
+
+                var hasher = new PasswordHasher<TUser>();
+                user.PasswordAnswerHash = hasher.HashPassword(user, user.PasswordAnswerHash);
+
+                var result = await this.UserManager.CreateAsync(user, password ?? InitialPassword);
 
                 if (result.Succeeded)
                 {
@@ -49,61 +61,90 @@
             return null;
         }
 
-        public async Task<TUser> AddUserAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null)
+        public async Task<TUser> AddUserAsync(string email, string password, string question = null, string answer = null, string firstName = null, string lastName = null, string role = null)
         {
-            var user = new TUser { Email = email, FirstName = firstName, LastName = lastName, Avatar = avatar };
+            var user = new TUser { Email = email, PasswordQuestion = question, PasswordAnswerHash = answer, FirstName = firstName, LastName = lastName };
             return await this.AddUserAsync(user, password, role);
         }
 
-        public async Task DeleteUserAsync(TUser user)
+        public async Task<bool> DeleteUserAsync(TUser user)
         {
-            await this.userManager.DeleteAsync(user);
+            var result = await this.UserManager.DeleteAsync(user);
+            return result.Succeeded;
         }
 
-        public async Task DeleteUserAsync(string id)
+        public async Task<bool> DeleteUserAsync(string email)
         {
-            await this.userManager.DeleteAsync(this.GetUserById(id));
+            var user = this.GetUser(email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            return await this.DeleteUserAsync(user);
         }
 
-        public IQueryable<TUser> GetAllUsers()
+        public async Task<bool> UpdateUserAsync(TUser user)
         {
-            return this.userManager.Users;
+            var result = await this.UserManager.UpdateAsync(user);
+            return result.Succeeded;
         }
 
-        public TUser GetUserByEmail(string email)
+        public IQueryable<TUser> GetAllUsers() => this.UserManager.Users;
+
+        public TUser GetUser(string email) => this.UserManager.Users.FirstOrDefault(u => u.Email == email);
+
+        public async Task<bool> ChangePasswordAsync(TUser user, string oldPassword, string newPassword)
         {
-            return this.userManager.Users.FirstOrDefault(u => u.Email == email);
+            var result = await this.UserManager.ChangePasswordAsync(user, oldPassword, newPassword);
+            return result.Succeeded;
         }
 
-        public TUser GetUserById(string id)
+        public async Task<bool> ResetPasswordAsync(TUser user, string passwordAnswer, string newPassword)
         {
-            return this.userManager.Users.FirstOrDefault(u => u.Id == id);
+            var hasher = new PasswordHasher<TUser>();
+            var isPasswordCorrect = hasher.VerifyHashedPassword(user, user.PasswordAnswerHash, passwordAnswer);
+
+            if (isPasswordCorrect == PasswordVerificationResult.Success)
+            {
+                var token = await this.UserManager.GeneratePasswordResetTokenAsync(user);
+                var result = await this.UserManager.ResetPasswordAsync(user, token, newPassword);
+
+                return result.Succeeded;
+            }
+            else
+            {
+                return false;
+            }
         }
 
-        public async Task UpdateUserAsync(TUser user)
+        public async Task<bool> CheckPasswordAsync(TUser user, string password)
         {
-            await this.userManager.UpdateAsync(user);
+            return await this.UserManager.CheckPasswordAsync(user, password);
         }
+
+        #endregion
 
         public void AddRoles(IEnumerable<string> roles)
         {
-            this.context.Roles.AddRange(roles.Select(r => new IdentityRole(r)));
-            this.context.SaveChanges();
+            this.Context.Roles.AddRange(roles.Select(r => new IdentityRole(r)));
+            this.Context.SaveChanges();
         }
 
         public async Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info)
         {
-            await this.userManager.AddLoginAsync(user, info);
+            await this.UserManager.AddLoginAsync(user, info);
         }
 
         public bool RemoveRoles(IEnumerable<string> roles)
         {
             if (roles.All(role => this.GetAllUsersinRole(role).Count() <= 0))
             {
-                var rolesDb = this.context.Roles.Where(x => roles.Contains(x.Name));
+                var rolesDb = this.Context.Roles.Where(x => roles.Contains(x.Name));
 
-                this.context.RemoveRange(rolesDb);
-                this.context.SaveChanges();
+                this.Context.RemoveRange(rolesDb);
+                this.Context.SaveChanges();
                 return true;
             }
 
@@ -112,17 +153,17 @@
 
         public IQueryable<string> GetAllRoles()
         {
-            var a = this.context.Roles.Select(r => r.Name);
-            return this.context.Roles.Select(r => r.Name);
+            var a = this.Context.Roles.Select(r => r.Name);
+            return this.Context.Roles.Select(r => r.Name);
         }
 
         public IQueryable<TUser> GetAllUsersinRole(string role)
         {
-            var roleDb = this.context.Roles.FirstOrDefault(x => x.Name == role);
+            var roleDb = this.Context.Roles.FirstOrDefault(x => x.Name == role);
 
             if (roleDb != null)
             {
-                return this.context.Users.Where(x => x.Roles.Any(r => r.RoleId == roleDb.Id));
+                return this.Context.Users.Where(x => x.Roles.Any(r => r.RoleId == roleDb.Id));
             }
 
             return new List<TUser>().AsQueryable();                       
@@ -130,15 +171,54 @@
 
         public async Task AddUserInRole(TUser user, string role)
         {
-            if (!(await userManager.IsInRoleAsync(user, role)))
+            if (!(await this.UserManager.IsInRoleAsync(user, role)))
             {
-                this.context.UserRoles.Add(new IdentityUserRole<string>()
+                this.Context.UserRoles.Add(new IdentityUserRole<string>()
                 {
-                    RoleId = this.context.Roles.First(x => x.Name == role).Id,
+                    RoleId = this.Context.Roles.First(x => x.Name == role).Id,
                     UserId = user.Id
                 });
-                this.context.SaveChanges();
+                this.Context.SaveChanges();
             }
+        }
+        
+        public async Task<bool> SignInAsync(TUser user, string password = null)
+        {
+            if (!await this.SignInManager.CanSignInAsync(user))
+            {
+                return false;
+            }
+
+            if (password == null)
+            {
+                await this.SignInManager.SignInAsync(user, true);
+                return true;
+            }
+            else
+            {
+                var result = await this.SignInManager.PasswordSignInAsync(user, password, true, false);
+
+                if (result.Succeeded)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> SignInAsync(string email, string password = null)
+        {
+            var user = this.GetUser(email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            return await this.SignInAsync(user, password);
         }
     }
 }

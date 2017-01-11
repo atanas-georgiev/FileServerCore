@@ -1,11 +1,13 @@
 ﻿namespace FileServerCore.Web.Areas.Account.Controllers
 {
-    using System;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
 
-    using Avg.Data.Models;    
+    using Avg.Data;
+    using Avg.Data.Models;
+
+    using AvgIdentity.Managers;
 
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
@@ -15,8 +17,6 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
-    using AvgIdentity.Managers;
-    using Avg.Data;
 
     [Area("Account")]
     public class LoginController : BaseController
@@ -116,10 +116,9 @@
                 //// TODO: avatar
                 var user = await this.UserRoleManager.AddUserAsync(
                                model.Email,
-                               model.FirstName,
-                               model.LastName,
                                null,
-                               null);
+                               model.FirstName,
+                               model.LastName);
 
                 if (user != null)
                 {
@@ -128,7 +127,7 @@
                     await this.signInManager.SignInAsync(user, false);
                     return this.RedirectToLocal(returnUrl);
                 }
-                
+
                 this.ModelState.AddModelError("Email", this.LocalizedErrorMessages["UsernameExist"]);
             }
 
@@ -161,13 +160,9 @@
                 return this.View(model);
             }
 
-            var result = await this.signInManager.PasswordSignInAsync(
-                             model.Email,
-                             model.Password,
-                             true,
-                             lockoutOnFailure: false);
+            var result = await this.UserRoleManager.SignInAsync(model.Email, model.Password);
 
-            if (result.Succeeded)
+            if (result)
             {
                 return this.RedirectToLocal(returnUrl);
             }

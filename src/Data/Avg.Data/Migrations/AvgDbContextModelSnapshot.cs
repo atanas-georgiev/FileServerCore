@@ -23,8 +23,6 @@ namespace Avg.Data.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<byte[]>("Avatar");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -38,14 +36,12 @@ namespace Avg.Data.Migrations
                     b.Property<bool>("EmailConfirmed");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(100);
 
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50);
+                        .HasMaxLength(100);
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -59,7 +55,13 @@ namespace Avg.Data.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
+                    b.Property<string>("PasswordAnswerHash")
+                        .HasMaxLength(100);
+
                     b.Property<string>("PasswordHash");
+
+                    b.Property<string>("PasswordQuestion")
+                        .HasMaxLength(100);
 
                     b.Property<string>("PhoneNumber");
 

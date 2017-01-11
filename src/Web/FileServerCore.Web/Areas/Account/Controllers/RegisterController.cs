@@ -3,7 +3,10 @@
     using System.IO;
     using System.Threading.Tasks;
 
+    using Avg.Data;
     using Avg.Data.Models;
+
+    using AvgIdentity.Managers;
 
     using FileServerCore.Web.Areas.Account.Models;
     using FileServerCore.Web.Areas.Shared.Controllers;
@@ -13,14 +16,10 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Localization;
-    using AvgIdentity.Managers;
-    using Avg.Data;
 
     [Area("Account")]
     public class RegisterController : BaseController
     {
-        private readonly SignInManager<AvgIdentityUser> signInManager;
-
         public RegisterController(
             IUserRoleManager<AvgIdentityUser, AvgDbContext> userService,
             IStringLocalizer<Labels> localizedLabels,
@@ -28,11 +27,10 @@
             SignInManager<AvgIdentityUser> signInManager)
             : base(userService, localizedLabels, localizedErrorMessages)
         {
-            this.signInManager = signInManager;
         }
 
         public IActionResult Index(string returnUrl)
-        {
+        { 
             return this.View(new AccountRegisterViewModel() { ReturnUrl = returnUrl });
         }
 
@@ -46,15 +44,17 @@
                 //// TODO: avatar
                 var user = await this.UserRoleManager.AddUserAsync(
                                model.Email,
+                               model.Password, 
+                               "test",
+                               "test",
                                model.FirstName,
                                model.LastName,
-                               model.Password,
                                null);
 
                 if (user != null)
                 {
                     //// TODO: Add to role
-                    await this.signInManager.SignInAsync(user, false);
+                    await this.UserRoleManager.SignInAsync(user);
                     if (string.IsNullOrEmpty(model.ReturnUrl))
                     {
                         return this.RedirectToAction("Index", "Home", new { area = string.Empty });

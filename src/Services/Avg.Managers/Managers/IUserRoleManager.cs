@@ -6,6 +6,8 @@
     using Microsoft.AspNetCore.Identity;
     using Avg.Data.Models;
     using System.Collections.Generic;
+    using System.Globalization;
+
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
     public interface IUserRoleManager<TUser, TContext>
@@ -17,27 +19,29 @@
 
             Task<TUser> AddUserAsync(TUser user, string password, string role = null);
 
-            Task<TUser> AddUserAsync(string email, string firstName, string lastName, string password, byte[] avatar, string role = null);
+            Task<TUser> AddUserAsync(string email, string password, string question = null, string answer = null, string firstName = null, string lastName = null, string role = null);
 
-            Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info);
+            Task<bool> DeleteUserAsync(TUser user);
 
-            Task DeleteUserAsync(string id);
+            Task<bool> DeleteUserAsync(string email);
 
-            Task DeleteUserAsync(TUser user);
-
-            Task UpdateUserAsync(TUser user);
+            Task<bool> UpdateUserAsync(TUser user);
 
             IQueryable<TUser> GetAllUsers();
 
-            TUser GetUserByEmail(string email);
+            TUser GetUser(string email);
 
-            TUser GetUserById(string id);            
+            Task<bool> ChangePasswordAsync(TUser user, string oldPassword, string newPassword);
+
+            Task<bool> ResetPasswordAsync(TUser user, string passwordAnswer, string newPassword);
+
+            Task<bool> CheckPasswordAsync(TUser user, string password);
 
         #endregion
 
         #region Roles
 
-            void AddRoles(IEnumerable<string> roles);
+        void AddRoles(IEnumerable<string> roles);
 
             bool RemoveRoles(IEnumerable<string> roles);
 
@@ -46,6 +50,15 @@
             IQueryable<TUser> GetAllUsersinRole(string role);
 
             Task AddUserInRole(TUser user, string role);
+
+        #endregion
+
+        #region Sign
+            Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info);
+
+            Task<bool> SignInAsync(TUser user, string password = null);
+
+            Task<bool> SignInAsync(string email, string password = null);
 
         #endregion
     }
