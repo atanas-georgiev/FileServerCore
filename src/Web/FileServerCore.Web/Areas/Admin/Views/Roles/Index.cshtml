@@ -12,27 +12,18 @@
     </div>
     <div class="row">
 
-    @(Html.Kendo().Grid<RolesViewModel>().Name("grid").Columns(columns =>
-    {
-        columns.Bound(p => p.Name).EditorTemplateName("KendoTextBox");
-        columns.Bound(p => p.UsersCount);
-        columns.Command(command =>
-        {
-            command.Destroy();
-        });
-    })
-    .ToolBar(toolbar => toolbar.Create())
-    .Editable(editable => editable.Mode(GridEditMode.PopUp))
-    .Pageable()
-    .Sortable()
-    .Scrollable()
-    // .HtmlAttributes(new { style = "height:550px;" })
-    .DataSource(dataSource => dataSource.Ajax().PageSize(20)
-    .Events(events => events.Error("error_handler"))
-    .Model(model => model.Id(p => p.Name))
-    .Create(update => update.Action("RolesCreate", "Json"))
-    .Read(read => read.Action("RolesRead", "Json"))
-    .Destroy(update => update.Action("RolesDestroy", "Json"))))
+        @(Html.Kendo().Grid<RolesViewModel>().Name("grid").Columns(columns =>
+     {
+         columns.Bound(p => p.Name).EditorTemplateName("KendoTextBox");
+         columns.Bound(p => p.UsersCount);
+         columns.Command(command =>
+         {
+             command.Destroy();
+         });
+     }).ToolBar(toolbar => toolbar.Create()).Editable(editable => editable.Mode(GridEditMode.PopUp)).Pageable().Sortable().Scrollable()
+        // .HtmlAttributes(new { style = "height:550px;" })
+        .DataSource(dataSource => dataSource.Ajax().PageSize(20).Events(events => events.Error("error_handler")).Model(model => model.Id(p => p.Name)).Create(update => update.Action("RolesCreate", "Json")).Read(read => read.Action("RolesRead", "Json")).Destroy(update => update.Action("RolesDestroy", "Json"))))
+
     </div>
 </div>
 <script type="text/javascript">

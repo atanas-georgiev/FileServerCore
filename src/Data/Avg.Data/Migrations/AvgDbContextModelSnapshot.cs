@@ -55,8 +55,7 @@ namespace Avg.Data.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("PasswordAnswerHash")
-                        .HasMaxLength(100);
+                    b.Property<string>("PasswordAnswerHash");
 
                     b.Property<string>("PasswordHash");
 

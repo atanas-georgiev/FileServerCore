@@ -17,48 +17,55 @@
 
         #region Users
 
-            Task<TUser> AddUserAsync(TUser user, string password, string role = null);
+        Task<TUser> AddUserAsync(TUser user, string password, string role = null);
 
-            Task<TUser> AddUserAsync(string email, string password, string question = null, string answer = null, string firstName = null, string lastName = null, string role = null);
+        Task<TUser> AddUserAsync(string email, string password, string question = null, string answer = null, string firstName = null, string lastName = null, string role = null);
 
-            Task<bool> DeleteUserAsync(TUser user);
+        Task<bool> DeleteUserAsync(TUser user);
 
-            Task<bool> DeleteUserAsync(string email);
+        Task<bool> DeleteUserAsync(string email);
 
-            Task<bool> UpdateUserAsync(TUser user);
+        Task<bool> UpdateUserAsync(TUser user);
 
-            IQueryable<TUser> GetAllUsers();
+        Task<bool> ChangePasswordAsync(TUser user, string oldPassword, string newPassword);
 
-            TUser GetUser(string email);
+        Task<bool> ResetPasswordAsync(TUser user, string passwordAnswer, string newPassword);
 
-            Task<bool> ChangePasswordAsync(TUser user, string oldPassword, string newPassword);
+        Task<bool> CheckPasswordAsync(TUser user, string password);
 
-            Task<bool> ResetPasswordAsync(TUser user, string passwordAnswer, string newPassword);
+        IQueryable<TUser> GetAllUsers();
 
-            Task<bool> CheckPasswordAsync(TUser user, string password);
+        TUser GetUser(string email);
 
         #endregion
 
         #region Roles
 
-        void AddRoles(IEnumerable<string> roles);
+        Task<bool> AddRoleAsync(string role);
 
-            bool RemoveRoles(IEnumerable<string> roles);
+        Task<bool> AddRolesAsync(IEnumerable<string> roles);
 
-            IQueryable<string> GetAllRoles();
+        Task<bool> AddUserInRoleAsync(TUser user, string role);
 
-            IQueryable<TUser> GetAllUsersinRole(string role);
+        Task<bool> RemoveRoleAsync(string role);
 
-            Task AddUserInRole(TUser user, string role);
+        Task<bool> RemoveRolesAsync(IEnumerable<string> roles);
+
+        Task<bool> RemoveUserFromRoleAsync(TUser user, string role);
+
+        IQueryable<string> GetAllRoles();
+
+        IQueryable<TUser> GetAllUsersinRole(string role);        
 
         #endregion
 
         #region Sign
-            Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info);
 
-            Task<bool> SignInAsync(TUser user, string password = null);
+        Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info);
 
-            Task<bool> SignInAsync(string email, string password = null);
+        Task<bool> SignInAsync(TUser user, string password = null);
+
+        Task<bool> SignInAsync(string email, string password = null);
 
         #endregion
     }

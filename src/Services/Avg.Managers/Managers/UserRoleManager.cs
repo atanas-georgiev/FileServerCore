@@ -32,8 +32,6 @@
             this.Context = context;
         }
 
-
-
         #region Users
         public virtual async Task<TUser> AddUserAsync(TUser user, string password, string role = null)
         {
@@ -51,7 +49,7 @@
                 {
                     if (role != null)
                     {
-                        await this.AddUserInRole(user, role);
+                        await this.AddUserInRoleAsync(user, role);
                     }
 
                     return user;
@@ -126,36 +124,88 @@
 
         #endregion
 
-        public void AddRoles(IEnumerable<string> roles)
+        #region Roles
+
+        public async Task<bool> AddRoleAsync(string role)
         {
-            this.Context.Roles.AddRange(roles.Select(r => new IdentityRole(r)));
-            this.Context.SaveChanges();
+            await this.Context.Roles.AddAsync(new IdentityRole(role));
+            var result = await this.Context.SaveChangesAsync();
+            return (result != 0);            
         }
+
+        public async Task<bool> AddRolesAsync(IEnumerable<string> roles)
+        {
+            await this.Context.Roles.AddRangeAsync(roles.Select(r => new IdentityRole(r)));
+            var result = await this.Context.SaveChangesAsync();
+            return (result != 0);
+        }
+
+        public async Task<bool> AddUserInRoleAsync(TUser user, string role)
+        {
+            if (!(await this.UserManager.IsInRoleAsync(user, role)))
+            {
+
+
+                await this.Context.UserRoles.AddAsync(new IdentityUserRole<string>()
+                {
+                    RoleId = this.Context.Roles.First(x => x.Name == role).Id,
+                    UserId = user.Id
+                });
+                this.Context.SaveChanges();
+            }
+
+            return true;
+        }
+
+        public async Task<bool> RemoveRoleAsync(string role)
+        {
+            if (this.GetAllUsersinRole(role).Any())
+            {
+                return false;
+            }
+            else
+            {
+                var roleDb = this.Context.Roles.FirstOrDefault(r => r.Name == role);
+                this.Context.Roles.Remove(roleDb);
+                var result = await this.Context.SaveChangesAsync();
+                return (result != 0);
+            }
+        }
+
+        public async Task<bool> RemoveRolesAsync(IEnumerable<string> roles)
+        {            
+            if (roles.All(role => this.GetAllUsersinRole(role).Any()))
+            {
+                return false;
+            }
+            else
+            {
+                var rolesDb = this.Context.Roles.Where(x => roles.Contains(x.Name));
+                this.Context.Roles.RemoveRange(rolesDb);
+                var result = await this.Context.SaveChangesAsync();
+                return (result != 0);
+            }
+        }
+
+        public async Task<bool> RemoveUserFromRoleAsync(TUser user, string role)
+        {
+            return false;
+        }
+
+        public IQueryable<string> GetAllRoles()
+        {            
+            return this.Context.Roles.Select(r => r.Name);
+        }
+
+        #endregion
+
 
         public async Task AddUserExternalLoginInfoAsync(TUser user, ExternalLoginInfo info)
         {
             await this.UserManager.AddLoginAsync(user, info);
         }
 
-        public bool RemoveRoles(IEnumerable<string> roles)
-        {
-            if (roles.All(role => this.GetAllUsersinRole(role).Count() <= 0))
-            {
-                var rolesDb = this.Context.Roles.Where(x => roles.Contains(x.Name));
 
-                this.Context.RemoveRange(rolesDb);
-                this.Context.SaveChanges();
-                return true;
-            }
-
-            return false;
-        }
-
-        public IQueryable<string> GetAllRoles()
-        {
-            var a = this.Context.Roles.Select(r => r.Name);
-            return this.Context.Roles.Select(r => r.Name);
-        }
 
         public IQueryable<TUser> GetAllUsersinRole(string role)
         {
@@ -169,18 +219,7 @@
             return new List<TUser>().AsQueryable();                       
         }
 
-        public async Task AddUserInRole(TUser user, string role)
-        {
-            if (!(await this.UserManager.IsInRoleAsync(user, role)))
-            {
-                this.Context.UserRoles.Add(new IdentityUserRole<string>()
-                {
-                    RoleId = this.Context.Roles.First(x => x.Name == role).Id,
-                    UserId = user.Id
-                });
-                this.Context.SaveChanges();
-            }
-        }
+
         
         public async Task<bool> SignInAsync(TUser user, string password = null)
         {

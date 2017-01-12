@@ -36,7 +36,7 @@
         {
             if (role != null && this.ModelState.IsValid)
             {
-                this.UserRoleManager.AddRoles(new[] { role.Name });
+                var res = this.UserRoleManager.AddRoleAsync(role.Name).Result;
             }
 
             return this.Json(new[] { role }.ToDataSourceResult(request, this.ModelState));
@@ -47,9 +47,9 @@
         {
             if (role != null)
             {
-                var result = this.UserRoleManager.RemoveRoles(new[] { role.Name });
+                var result = this.UserRoleManager.RemoveRoleAsync(role.Name);
 
-                if (result == false)
+                if (result.Result == false)
                 {
                     this.ModelState.AddModelError("Name", "dadda");
                 }
@@ -59,7 +59,7 @@
         }
 
         public ActionResult RolesRead([DataSourceRequest] DataSourceRequest request)
-        {            
+        {
             return this.Json(this.UserRoleManager.GetAllRoles().ProjectTo<RolesViewModel>().ToDataSourceResult(request));
         }
     }

@@ -8,7 +8,7 @@ using Avg.Data;
 namespace Avg.Data.Migrations
 {
     [DbContext(typeof(AvgDbContext))]
-    [Migration("20170111183543_InitData")]
+    [Migration("20170112081950_InitData")]
     partial class InitData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,8 +56,7 @@ namespace Avg.Data.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
-                    b.Property<string>("PasswordAnswerHash")
-                        .HasMaxLength(100);
+                    b.Property<string>("PasswordAnswerHash");
 
                     b.Property<string>("PasswordHash");
 

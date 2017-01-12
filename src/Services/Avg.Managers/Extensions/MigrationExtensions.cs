@@ -100,7 +100,7 @@
                 throw new AvgIdentityConfigurationException("AvgIdentity InitialData error");
             }
 
-            userRoleManager.AddRoles(roles);
+            userRoleManager.AddRolesAsync(roles);
         }
     }
 }

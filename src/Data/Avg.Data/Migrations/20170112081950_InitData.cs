@@ -28,7 +28,7 @@ namespace Avg.Data.Migrations
                     ModifiedOn = table.Column<DateTime>(nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    PasswordAnswerHash = table.Column<string>(maxLength: 100, nullable: true),
+                    PasswordAnswerHash = table.Column<string>(nullable: true),
                     PasswordHash = table.Column<string>(nullable: true),
                     PasswordQuestion = table.Column<string>(maxLength: 100, nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
