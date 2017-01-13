@@ -41,7 +41,10 @@
                 user.UserName = user.Email;
 
                 var hasher = new PasswordHasher<TUser>();
-                user.PasswordAnswerHash = hasher.HashPassword(user, user.PasswordAnswerHash);
+                if (user.PasswordAnswerHash != null)
+                {
+                    user.PasswordAnswerHash = hasher.HashPassword(user, user.PasswordAnswerHash);
+                }
 
                 var result = await this.UserManager.CreateAsync(user, password ?? InitialPassword);
 

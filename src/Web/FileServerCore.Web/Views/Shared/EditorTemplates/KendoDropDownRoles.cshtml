@@ -1,0 +1,3 @@
+﻿@using Kendo.Mvc.UI
+
+@(Html.Kendo().DropDownListFor(m => m).BindTo(Model.ToSelectList()).SelectedIndex((int)Model))
